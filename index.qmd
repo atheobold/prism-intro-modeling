@@ -1,0 +1,58 @@
+---
+title: "Predictive Modeling with Pipelines in tidymodels and scikit-learn"
+---
+
+::: columns
+::: {.column width="48%"}
+In this workshop, we will use **predictive modeling** to analyze data about NHL
+hockey players between 2006 and 2018.  The goal is to learn and practice the
+standard workflow used for machine learning analysis:
+
+1. Cleaning the data
+2. Visualizing relationships
+3. Choosing predictor (input) variables
+4. Choosing between competing models
+5. Interpreting model conclusions
+6. Ethics considerations
+
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+![](images/puzzle-pieces.png){fig-alt="Four colored puzzle pieces where three of the four have been linked together and the fourth (green) piece is about to be placed with the other pieces."}
+:::
+:::
+
+## Accessing Workshop Materials
+
+You can either work **locally** with the workshop materials (on your own laptop)
+or **remotely** (online). To work locally, you will need to have either R or 
+Python installed on your computer, and a variety of packages. If you do not 
+have either of these installed, you can still work online! 
+
+::: columns
+::: {.column width="48%"}
+### Local Files
+
+[Click here to download the R Quarto file]()
+
+[Click here to download the Python Quarto file]()
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+### Remote Google Colab Files
+
+[Click here for Python notebook](https://colab.research.google.com/drive/1_jhbbuiEZjojGp_YoHewS5wyPxswPQ8o?usp=sharing)
+
+[Click here for R notebook](https://colab.research.google.com/drive/1Eav6WFhaqOlsfg2-hOvxrKBemHg3PgYJ?usp=sharing)
+:::
+:::
+
+
+
+
