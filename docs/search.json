@@ -12,5 +12,12 @@
     "title": "Predictive Modeling with Pipelines in tidymodels and scikit-learn",
     "section": "Accessing Workshop Materials",
     "text": "Accessing Workshop Materials\nYou can either work locally with the workshop materials (on your own laptop) or remotely (online). To work locally, you will need to have either R or Python installed on your computer, and a variety of packages. If you do not have either of these installed, you can still work online!\n\n\n\nLocal Files\nClick here to download the R Quarto file\nClick here to download the Python Quarto file\n\n\n\n\n\nRemote Google Colab Files\nClick here for Python notebook\nClick here for R notebook"
+  },
+  {
+    "objectID": "slides.html#welcome",
+    "href": "slides.html#welcome",
+    "title": "Introduction to Predictive Modeling with Pipelines in tidymodels and scikit-learn",
+    "section": "Welcome!",
+    "text": "Welcome!\nMaterials for this workshop can be found here:"
   }
 ]

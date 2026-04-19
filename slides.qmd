@@ -3,5 +3,13 @@ title: "Introduction to Predictive Modeling with Pipelines in tidymodels and sci
 format: revealjs
 author: "Dr. Allison Theobold"
 subtitle: "PRISM 2026"
-editor: visual
+editor: source
 ---
+
+## Welcome!
+
+Materials for this workshop can be found here:
+
+::: {.large}
+
+:::
