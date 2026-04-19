@@ -1,0 +1,212 @@
+---
+title: "Introduction to Predictive Modeling with Pipelines"
+jupyter: python3
+---
+
+## Data Context 
+
+The data for today is taken from [this Kaggle dataset](https://www.kaggle.com/datasets/xavya77/nhl04to18) of NHL player
+statistics. The data contain statistics on every NHL player for the 
+2004 through 2018 seasons assembled by Xavya. 
+
+- Data were scraped from: <https://www.hockey-reference.com/> 
+- Skater statistics were scraped from: <https://www.hockey-reference.com/leagues/NHL_2018_skaters.html>
+- Hart MVP voting was scraped from:
+<https://www.hockey-reference.com/awards/hart.html>
+
+We also added in [this Tidy Tuesday dataset](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-01-09/readme.md) of player height, weight, and birthday information.
+
+This information was acquired through the [NHL API](https://github.com/Zmalski/NHL-API-Reference). 
+
+## Loading the Data 
+
+I've saved the `.csv` to Dropbox, so we can read it in using a URL. Run the code
+provided to load the data.
+
+```{python}
+#| label: load-data-Python
+#| echo: true
+#| code-line-numbers: false
+
+import pandas as pd
+
+data_nhl = pd.read_csv("https://www.dropbox.com/scl/fi/rrbll4jm20fvol58nk8wf/nhl_player_stats.csv?rlkey=pbg8avxv02w8gras3mmimmifh&st=llz0bxpa&dl=0")
+```
+
+## Inspecting the Data
+
+Take a few minutes to look over the data. 
+
+- What is the **observational unit**? (i.e., what uniquely identifies a row?)
+
+- What are the variables?
+    * Are there any variables whose meaning is not obvious?
+
+- What are the data types of the variables (e.g., number, character, date)
+
+## Observations & Variables 
+
+## Observations & Variables 
+
+Each row is a player's statistics from one `season`. The variables measured
+about each player are:
+
+* identification: `first_name`, `last_name`
+* physicals: `height`, `weight`, `age` (for that season)
+* birth Information: `birth_date`, `birth_day`, `birth_month`, `birth_city`,
+`birth_country`, `birth_state_province`
+* position & team: `team`, `position_code` (right wing, left wing, center, 
+or defense), `position_type` (forward or defense), and `sweater_number`.
+* statistics for the season: `games_played`, `goals`, `assists`, `points`
+(goals plus assists), `plusminus` (team goal differential when player is
+playing), and `penalty_minutes`.
+
+## Posing a Question
+
+We will use these data to try to address this question: 
+
+> What features of an NHL player are associated with them scoring more points
+> (goals + assists) in a particular season?
+
+# Steps 1 & 2: Cleaning & Visualizing the Data
+
+Our goal here is to visualize variables we are interested in to look for 
+interesting patterns, **while also** looking for issues or anomalies to fix in
+the data.
+
+## Numeric Variables
+
+What are we looking for?
+
+-   **Unusual observations** that we might need to *remove*.
+
+-   Variables that are very **skewed** and might need to be *transformed*.
+
+-   Variables that are extremely **multimodal** and might need to be *binned*.
+
+-   Variables with values that we might want to **omit** from our study because
+they are *not relevant* to the question.
+
+### Investigating with Visuals
+
+```{python}
+from plotnine import *
+```
+
+Use the template code provided to create visuals of each numeric variable in the
+`data_nhl` dataset: 
+
+- `height_in_inches`
+- `weight_in_pounds`
+- `age`
+- `birth_month` 
+- `games_played`
+- `goals`
+- `assists`
+- `points`
+- `plusminus`
+- `penalty_minutes`
+
+Do you find anything notable?
+
+```{python}
+#| label: plotnine-template
+
+(
+  ggplot(data = data_nhl, 
+       mapping = aes(x = "points")
+       ) +
+  geom_histogram()
+)
+```
+
+### Cleaning the Data
+
+Based on your investigation, you will likely want to filter the data to 
+exclude certain observations. Fill in the code below to filter the data (based
+on Dr. T's slides):
+
+*Replace the `___` with the relational statement you want (e.g., `> 50`)!*
+
+```{python}
+#| label: data-cleaning-numerical
+
+dat_nhl_clean = dat_nhl[
+    (dat_nhl["games_played"] ___) &
+    (dat_nhl["points"] ___) &
+    (dat_nhl["age"] ___) &
+    (dat_nhl["penalty_minutes"] ___)
+]
+```
+
+## Categorical variables
+
+What are we looking for?
+
+-   Categories that should be **combined** to make a few larger ones.
+-   Variables that should have an `"Other"` category to combine the rarest
+categories.
+-  Variables with **too many categories** to reasonably include them in our
+analysis.
+- Variables that are **subsets** of each other, so we might want to include only
+one or the other.
+- Anything that suggests **issues with the data** to fix.
+
+### Investigating with Visuals
+
+Use the template code provided to create visuals of each numeric variable in the
+`data_nhl` dataset: 
+
+- `season`
+- `team`
+- `position_code`,
+- `position_type`
+- `birth_city`
+- `birth_country`
+- `birth_state_province`
+
+Do you find anything notable?
+
+```{python}
+(
+  ggplot(data_nhl, 
+       mapping = aes(x = "position_code")) +
+  geom_bar()
+  )
+```
+
+### Cleaning the Data
+
+Based on your investigation, you will likely want to filter the data to 
+exclude certain observations. Fill in the code below to filter the data (based
+on Dr. T's slides):
+
+```{python}
+#| label: data-cleaning-categorical
+
+dat_nhl = dat_nhl.drop_duplicates(
+  subset = []
+  )
+
+top_countries = (
+  dat_nhl[]
+  .value_counts()
+  .nlargest()
+  .index
+  )
+
+dat_nhl["can_or_usa"] = (
+  dat_nhl[]
+  .where(dat_nhl[].isin(top_countries), 
+         "Other")
+  )
+```
+
+### Check in
+
+Make sure your re-visualize your variables after making the cleaning changes, to ensure that this accomplished what you hoped!
+
+```{python}
+#| label: cleaning-check
+
+```
