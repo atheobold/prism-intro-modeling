@@ -16,8 +16,127 @@
   {
     "objectID": "slides.html#welcome",
     "href": "slides.html#welcome",
-    "title": "Introduction to Predictive Modeling with Pipelines in tidymodels and scikit-learn",
+    "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "Welcome!",
-    "text": "Welcome!\nMaterials for this workshop can be found here:"
+    "text": "Welcome!\n \n\nMaterials for this workshop can be found here:\nhttps://bit.ly/prism-intro-modeling"
+  },
+  {
+    "objectID": "slides.html#data-context---nhl-player-statistics",
+    "href": "slides.html#data-context---nhl-player-statistics",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Data Context - NHL Player Statistics",
+    "text": "Data Context - NHL Player Statistics\nThe data for today is taken from this Kaggle dataset of NHL player statistics. The data contain statistics on every NHL player for the 2004 through 2018 seasons assembled by Xavya.\n\nData were scraped from: https://www.hockey-reference.com/\nSkater statistics were scraped from: https://www.hockey-reference.com/leagues/NHL_2018_skaters.html\nHart MVP voting was scraped from: https://www.hockey-reference.com/awards/hart.html"
+  },
+  {
+    "objectID": "slides.html#data-context---nhl-player-birthdays",
+    "href": "slides.html#data-context---nhl-player-birthdays",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Data Context - NHL Player Birthdays",
+    "text": "Data Context - NHL Player Birthdays\nWe also added in this Tidy Tuesday dataset of player height, weight, and birthday information.\nThis information was acquired through the NHL API."
+  },
+  {
+    "objectID": "slides.html#loading-the-data",
+    "href": "slides.html#loading-the-data",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Loading the Data",
+    "text": "Loading the Data\nI’ve saved the .csv to Dropbox, so we can read it in using a URL. Run the code provided to load the data.\n\n\nlibrary(tidyverse)\n\ndata_nhl &lt;- read_csv(\"https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1\")\n\n\n\nimport pandas as pd\n\ndata_nhl = pd.read_csv(\"https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1\")"
+  },
+  {
+    "objectID": "slides.html#inspecting-the-data",
+    "href": "slides.html#inspecting-the-data",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Inspecting the Data",
+    "text": "Inspecting the Data\n\nTake a few minutes to look over the data.\n\nWhat is the observational unit? (i.e., what uniquely identifies a row?)\nWhat are the variables?\n\nAre there any variables whose meaning is not obvious?\n\nWhat are the data types of the variables (e.g., number, character, date)"
+  },
+  {
+    "objectID": "slides.html#data-cleaning",
+    "href": "slides.html#data-cleaning",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Data Cleaning",
+    "text": "Data Cleaning\n\n\n\n\n\n\nImportant\n\n\nThe 2005 season is absent as it was cancelled due to a player lockout, and the 2013 season was shorted from 82 to 48 game due to another player dispute."
+  },
+  {
+    "objectID": "slides.html#observations-variables",
+    "href": "slides.html#observations-variables",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Observations & Variables",
+    "text": "Observations & Variables\n\nEach row is a player’s statistics from one season. The variables measured about each player are:\n\nidentification: first_name, last_name\nphysicals: height, weight, age (for that season)\nbirth Information: birth_date, birth_day, birth_month, birth_city, birth_country, birth_state_province\nposition & team: team, position_code (right wing, left wing, center, or defense), position_type (forward or defense), and sweater_number.\nstatistics for the season: games_played, goals, assists, points (goals plus assists), plusminus (team goal differential when player is playing), and penalty_minutes."
+  },
+  {
+    "objectID": "slides.html#posing-a-question",
+    "href": "slides.html#posing-a-question",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Posing a Question",
+    "text": "Posing a Question\n\nWe will use these data to try to address this question:\n\nWhat features of an NHL player are associated with them scoring more points (goals + assists) in a particular season?"
+  },
+  {
+    "objectID": "slides.html#numeric-variables",
+    "href": "slides.html#numeric-variables",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Numeric Variables",
+    "text": "Numeric Variables\n\nWhat are we looking for?\n\n\nUnusual observations that we might need to remove.\nVariables that are very skewed and might need to be transformed.\nVariables that are extremely multimodal and might need to be binned.\nVariables with values that we might want to omit from our study because they are not relevant to the question."
+  },
+  {
+    "objectID": "slides.html#investigating-with-visuals",
+    "href": "slides.html#investigating-with-visuals",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Investigating with Visuals",
+    "text": "Investigating with Visuals\nUse the template code provided to create visuals of each numeric variable in the data_nhl dataset:\n\n\n\nheight_in_inches\nweight_in_pounds\nage\nbirth_month\ngames_played\n\n\n\n\n\ngoals\nassists\npoints\nplusminus\npenalty_minutes\n\n\nDo you find anything notable?"
+  },
+  {
+    "objectID": "slides.html#addressing-unusual-observations",
+    "href": "slides.html#addressing-unusual-observations",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Addressing Unusual Observations",
+    "text": "Addressing Unusual Observations\nBased on what you found in these visuals, there are a few extreme observations in some of the variables. There are two possible explanations for these extreme values:\n\nThese represent a player that genuinely had an extreme performance in a season.\nThese are data entry or recording errors.\n\nEither way, we will choose to omit them, since they might be misleading to our results."
+  },
+  {
+    "objectID": "slides.html#r-python-code",
+    "href": "slides.html#r-python-code",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "R & Python Code",
+    "text": "R & Python Code\n\n\nR Code\n\n\n\nPython Code"
+  },
+  {
+    "objectID": "slides.html#categorical-variables",
+    "href": "slides.html#categorical-variables",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Categorical variables",
+    "text": "Categorical variables\n\nWhat are we looking for?\n\n\nCategories that should be combined to make a few larger ones.\nVariables that should have an \"Other\" category to combine the rarest categories.\nVariables with too many categories to reasonably include them in our analysis.\nVariables that are subsets of each other, so we might want to include only one or the other.\nAnything that suggests issues with the data to fix."
+  },
+  {
+    "objectID": "slides.html#investigating-with-visuals-1",
+    "href": "slides.html#investigating-with-visuals-1",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Investigating with Visuals",
+    "text": "Investigating with Visuals\nUse the template code provided to create visuals of each numeric variable in the data_nhl dataset:\n\n\n\nseason\nteam\nposition_code,\nposition_type\n\n\n\n\n\nbirth_city\nbirth_country\nbirth_state_province\n\n\nDo you find anything notable?"
+  },
+  {
+    "objectID": "slides.html#addressing-unusual-observations-1",
+    "href": "slides.html#addressing-unusual-observations-1",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Addressing Unusual Observations",
+    "text": "Addressing Unusual Observations\nThese visualizations should reveal two issues:\n\nFor some reason, the entries for the 2009 season are listed twice. We will simply delete the duplicates.\nThe birth_city, birth_state_province, and birth_country variables have far too many different values to reasonable use.\n\n\nWe will use the country variable only, and we will limit its values to \"Canada\", \"United States\", or \"Other\"."
+  },
+  {
+    "objectID": "slides.html#r-python-code-1",
+    "href": "slides.html#r-python-code-1",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "R & Python Code",
+    "text": "R & Python Code\n\n\nR Code\n\ndata_nhl &lt;- data_nhl |&gt;\n  distinct(season, \n           team, \n           first_name, \n           last_name, \n           .keep_all = TRUE) |&gt;\n  mutate(\n    can_or_usa = fct_lump(birth_country, n = 2)\n  ) \n\n\n\n\nPython Code"
+  },
+  {
+    "objectID": "slides.html#check-in",
+    "href": "slides.html#check-in",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Check-in!",
+    "text": "Check-in!\nLet’s re-visualize the “problem” variables to make sure our cleaning changes accomplished what we hoped!"
+  },
+  {
+    "objectID": "slides.html#step-3-chooing-candidate-predictors",
+    "href": "slides.html#step-3-chooing-candidate-predictors",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Step 3: Chooing Candidate Predictors",
+    "text": "Step 3: Chooing Candidate Predictors\n\nHeated Rivalry Shane Hollander GIFfrom Heated Rivalry GIFs"
   }
 ]

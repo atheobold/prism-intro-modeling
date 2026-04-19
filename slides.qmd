@@ -1,15 +1,424 @@
 ---
-title: "Introduction to Predictive Modeling with Pipelines in tidymodels and scikit-learn"
-format: revealjs
+title: "Introduction to Predictive Modeling with Pipelines"
 author: "Dr. Allison Theobold"
 subtitle: "PRISM 2026"
+format: 
+  revealjs:
+    theme: [simple, style.scss]
+    scrollable: true
+    auto-stretch: true
 editor: source
 ---
 
+```{r}
+#| include: false
+#| label: reticulate-for-python
+#| message: false
+#| warning: false
+
+library(reticulate)
+use_python("~/.r-x86/bin/python", required = TRUE)
+```
+
 ## Welcome!
 
-Materials for this workshop can be found here:
+</br>
+</br>
 
 ::: {.large}
+Materials for this workshop can be found here:
+
+<https://bit.ly/prism-intro-modeling>
+:::
+
+<!-- good job i love you: https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446 -->
+
+<!-- ilya wink: https://tenor.com/view/heated-rivalry-ilya-rozanov-long-game-wink-shane-hollander-gif-1151741843253260055 -->
+
+<!-- this is awesome: https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672 -->
+
+<!-- girl: https://tenor.com/view/maria-girl-heated-rivalry-hr-gurl-gif-6064918331708214442 -->
+
+# Today's Data - NHL
+
+![](images/hr-face-off.png){fig-alt="An image from the show Heated Rivals where Shane Hollander is facing off with Ilya Rosanov."}
+
+
+## Data Context - NHL Player Statistics
+
+The data for today is taken from [this Kaggle dataset](https://www.kaggle.com/datasets/xavya77/nhl04to18) of NHL player
+statistics. The data contain statistics on every NHL player for the 
+2004 through 2018 seasons assembled by Xavya. 
+
+- Data were scraped from: <https://www.hockey-reference.com/> 
+- Skater statistics were scraped from: <https://www.hockey-reference.com/leagues/NHL_2018_skaters.html>
+- Hart MVP voting was scraped from:
+<https://www.hockey-reference.com/awards/hart.html>
+
+## Data Context - NHL Player Birthdays
+
+We also added in [this Tidy Tuesday dataset](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-01-09/readme.md) of player height, weight, and birthday information.
+
+This information was acquired through the [NHL API](https://github.com/Zmalski/NHL-API-Reference). 
+
+## Loading the Data 
+
+I've saved the `.csv` to Dropbox, so we can read it in using a URL. Run the code provided to load the data.
+
+</br>
+
+```{r}
+#| label: load-data-R
+#| echo: true
+#| code-line-numbers: false
+#| message: false
+#| warning: false 
+
+library(tidyverse)
+
+data_nhl <- read_csv("https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1")
+```
+
+</br>
+
+```{python}
+#| label: load-data-Python
+#| echo: true
+#| code-line-numbers: false
+
+import pandas as pd
+
+data_nhl = pd.read_csv("https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1")
+```
+
+## Inspecting the Data
+
+</br>
+
+Take a few minutes to look over the data. 
+
+- What is the **observational unit**? (i.e., what uniquely identifies a row?)
+
+- What are the variables?
+    * Are there any variables whose meaning is not obvious?
+
+- What are the data types of the variables (e.g., number, character, date)
+
+```{r}
+#| echo: false
+countdown::countdown(minutes = 3)
+```
+
+## Observations & Variables 
+
+::: {.midi}
+Each row is a player's statistics from one `season`. The variables measured
+about each player are:
+
+::: {.incremental}
+* identification: `first_name`, `last_name`
+* physicals: `height`, `weight`, `age` (for that season)
+* birth Information: `birth_date`, `birth_day`, `birth_month`, `birth_city`,
+`birth_country`, `birth_state_province`
+* position & team: `team`, `position_code` (right wing, left wing, center, 
+or defense), `position_type` (forward or defense), and `sweater_number`.
+* statistics for the season: `games_played`, `goals`, `assists`, `points`
+(goals plus assists), `plusminus` (team goal differential when player is
+playing), and `penalty_minutes`.
 
 :::
+:::
+
+## Posing a Question
+
+</br>
+
+We will use these data to try to address this question: 
+
+> What features of an NHL player are associated with them scoring more points
+> (goals + assists) in a particular season?
+
+# Steps 1 & 2: Cleaning & Visualizing the Data
+
+Our goal here is to visualize variables we are interested in to look for 
+interesting patterns, **while also** looking for issues or anomalies to fix in
+the data.
+
+## Numeric Variables
+
+::: {.large}
+What are we looking for?
+:::
+
+::: {.incremental}
+-   **Unusual observations** that we might need to *remove*.
+
+-   Variables that are very **skewed** and might need to be *transformed*.
+
+-   Variables that are extremely **multimodal** and might need to be *binned*.
+
+-   Variables with values that we might want to **omit** from our study because
+they are *not relevant* to the question.
+:::
+
+## Investigating with Visuals
+
+Use the template code provided to create visuals of each numeric variable in the
+`data_nhl` dataset: 
+
+::: columns
+::: {.column width="48%"}
+- `height_in_inches`
+- `weight_in_pounds`
+- `age`
+- `birth_month` 
+- `games_played`
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+- `goals`
+- `assists`
+- `points`
+- `plusminus`
+- `penalty_minutes`
+:::
+:::
+
+Do you find anything notable?
+
+```{r}
+#| echo: false
+countdown::countdown(minutes = 10)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+#| label: ggplot-template-histogram
+
+ggplot(data = data_nhl, 
+       mapping = aes(x = penalty_minutes)
+       ) +
+  geom_histogram()
+```
+
+```{python}
+#| echo: false
+#| eval: false
+#| label: plotnine-template-histogram
+
+from plotnine import *
+  
+(
+  ggplot(data = data_nhl, 
+       mapping = aes(x = "points")
+       ) +
+  geom_histogram()
+)
+```
+
+## Addressing Unusual Observations
+
+Based on what you found in these visuals, there are a few extreme observations
+in some of the variables. There are two possible explanations for these extreme
+values:
+
+1. These represent a player that genuinely had an extreme performance in a
+season.
+
+2. These are data entry or recording errors.
+
+Either way, we will choose to omit them, since they might be misleading to our results.
+
+## R & Python Code
+
+::: columns
+::: {.column width="48%"}
+### R Code
+
+```{r}
+data_nhl <- data_nhl |>
+  filter(
+    points < 200,
+    penalty_minutes < 400,
+    games_played > 50
+  )
+```
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+### Python Code
+
+```{python}
+data_nhl = data_nhl[
+    (data_nhl["points"] < 200) &
+    (data_nhl["penalty_minutes"] < 400) &
+    (data_nhl["games_played"] > 50)
+]
+```
+:::
+:::
+
+<!-- ::: {.callout-important} -->
+<!-- The 2005 season is absent as it was cancelled due to a player lockout, and -->
+<!-- the 2013 season was shorted from 82 to 48 game due to another player dispute. -->
+<!-- ::: -->
+
+
+## Categorical variables
+
+::: {.large}
+What are we looking for?
+:::
+
+::: {.incremental}
+-   Categories that should be **combined** to make a few larger ones.
+-   Variables that should have an `"Other"` category to combine the rarest
+categories.
+-  Variables with **too many categories** to reasonably include them in our
+analysis.
+- Variables that are **subsets** of each other, so we might want to include only
+one or the other.
+- Anything that suggests **issues with the data** to fix.
+:::
+
+## Investigating with Visuals
+
+Use the template code provided to create visuals of each numeric variable in the
+`data_nhl` dataset: 
+
+::: columns
+::: {.column width="48%"}
+- `season`
+- `team`
+- `position_code`,
+- `position_type`
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+- `birth_city`
+- `birth_country`
+- `birth_state_province`
+:::
+:::
+
+Do you find anything notable?
+
+```{r}
+#| echo: false
+countdown::countdown(minutes = 10)
+```
+
+```{r}
+#| label: ggplot-template-barplot
+#| echo: false
+#| eval: false
+
+ggplot(data_nhl, 
+       mapping = aes(x = position_code)) +
+  geom_bar()
+```
+
+
+```{python}
+#| label: plotnine-template-barplot
+#| echo: false
+#| eval: false
+
+(
+  ggplot(data_nhl, 
+       mapping = aes(x = "position_code")) +
+  geom_bar()
+  )
+```
+
+## Addressing Unusual Observations
+
+These visualizations should reveal two issues:
+
+1. For some reason, the entries for the `2009` season are listed twice.  We will
+simply delete the duplicates.
+
+2. The `birth_city`, `birth_state_province`, and `birth_country` variables have
+far too many different values to reasonable use.  
+
+- We will use the `country` variable only, and we will limit its values to 
+`"Canada"`, `"United States"`, or `"Other"`.
+
+## R & Python Code
+
+::: columns
+::: {.column width="48%"}
+### R Code
+
+```{r}
+#| echo: true
+
+data_nhl <- data_nhl |>
+  distinct(season, 
+           team, 
+           first_name, 
+           last_name, 
+           .keep_all = TRUE) |>
+  mutate(
+    can_or_usa = fct_lump(birth_country, n = 2)
+  ) 
+```
+
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+### Python Code
+
+```{python}
+
+data_nhl = data_nhl.drop_duplicates(
+  subset = ["season", "team", "first_name", "last_name"]
+  )
+
+top_countries = (
+  data_nhl["birth_country"]
+  .value_counts()
+  .nlargest(2)
+  .index
+)
+
+data_nhl["can_or_usa"] = (
+  data_nhl["birth_country"]
+  .where(data_nhl["birth_country"].isin(top_countries),
+         "Other")
+  )
+```
+:::
+:::
+
+## Check-in!
+
+Let's re-visualize the "problem" variables to make sure our cleaning changes
+accomplished what we hoped!
+
+## Step 3: Chooing Candidate Predictors
+
+<div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="80%"><a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+<!-- * `birth_month`: It is believed that players who are born earlier in the month are more likely to become professional athletes, because they are on the older end of the league for their age growing up.  We will see if that's true. -->
+
+<!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
+<!-- social and historical context to work responsibly with data. -->
+
+
+<!-- analogy with "other" category for race, gender -->
+<!-- analogy with student success (what features are associated with higher GPAs,  -->
+<!-- college degrees) -->
