@@ -103,7 +103,7 @@ Use the template code provided to create visuals of each numeric variable in the
 Do you find anything notable?
 
 ```{r}
-#| label: ggplot-template
+#| label: ggplot-template-numerical
 
 ggplot(data = data_nhl, 
        mapping = aes(x = points)
@@ -161,6 +161,8 @@ Use the template code provided to create visuals of each numeric variable in the
 Do you find anything notable?
 
 ```{r}
+#| label: ggplot-template-categorical
+
 ggplot(data_nhl, 
        mapping = aes(x = position_code)) +
   geom_bar()
@@ -198,62 +200,77 @@ Make sure your re-visualize your variables after making the cleaning changes, to
 
 ```
 
+# Step 3: Choosing Candidate Predictors
 
-## 2. Choose candidate predictors
+We will answer this question with a *predictive model*, that uses information in
+some *predictor* variables to create a process for guessing the value of the
+*target* variable (`points`).
 
-Now, we can focus on our research question:  **Which of these variables are associated with scoring points?**
+To decide which variables are worth including in our eventual model, we need to
+understand how they associate with the target variable of `points`.
 
-We will answer this question with a *predictive model*, that uses information in some *predictor* variables to create a process for guessing the value of the *target* variable (`points`).
+## Numeric Variables
 
-To decide which variables are worth including in our eventual model, we need to understand how they associate with the target variable of `points`.
+Consider the *numeric* variables in this dataset.  Which ones might be
+reasonable to use in our model?
 
-### Numeric variables
-
-Consider the *numeric* variables in this dataset.  Which ones might be reasonable to use in our model?
-
-Use the code below to visualize a few of these and comment on which ones seem to be associated.
+Use the code provided to visualize the relationship between `points` and a few
+of these potential predictors. Decide which variable(s) seem to have the 
+strongest relationship with our target variable (`points`). 
 
 ```{r}
-dat_nhl |>
-  ggplot() +
-  aes(x = age, y = points) +
+#| label: ggplot-template-two-numerical
+
+ggplot(data = data_nhl, 
+       mapping = aes(x = age, y = points)
+       ) +
   geom_point() +
-  stat_smooth()
+  geom_smooth()
 ```
 
+## Categorical variables
 
+Consider the *categorical* variables in this dataset.  Which ones might be
+reasonable to use in our model?
 
-:::{.callout-warning}
-You may have noticed that `goals`, `assists`, and `plusminus` are highly associated with `points`.  However, we won't use them as predictors in our model.  Why do you think this is?
-:::
-
-### Categorical variables
+Use the code provided to visualize the relationship between `points` and a few
+of these potential predictors. Decide which variable(s) seem to have the 
+strongest relationship with our target variable (`points`). 
 
 ```{r}
-dat_nhl |>
-  ggplot() +
-  aes(x = points, y = position_type) +
+#| label: ggplot-template-numerical-categorical
+
+library(ggridges)
+
+ggplot(data = data_nhl, 
+       mapping = aes(x = points, y = position_type)
+       ) +
   geom_density_ridges()
 ```
 
+## Multiple Variables
 
+Sometimes, the way one variable associates with `points` might be different
+depending on another variables.
 
-### Multiple variables
+It is believed that players who are born earlier in the month are more likely to
+become professional athletes, because they are on the older end of the league
+for their age growing up.  
 
-Sometimes, the way one variable associates with `points` might be different depending on another variables.
-
-For the sake of time, we won't explore all combinations, but let's take a look at one scenario.  Recall that players with earlier birthdays are said to be more successful.  It may be that this trend only applies in some countries, since not all countries have the same youth sports system.
-
+It may be that this trend only applies in some countries, since not all
+countries have the same youth sports system. Let's see!
 
 ```{r}
+#| label: points-by-birth-faceted-by-country
+
 dat_nhl |>
-  ggplot() +
-  aes(x = points, y = factor(birth_month)) +
-  facet_wrap(~can_or_usa) +
-  geom_density_ridges()
+  mutate(birth_month = as.factor(birth_month)) |> 
+  ggplot(data = data_nhl, 
+         mapping = aes(x = points, y = birth_month)
+         ) +
+  geom_density_ridges() +
+  facet_wrap(~can_or_usa)
 ```
-
-
 
 
 ### Make predictor recipes

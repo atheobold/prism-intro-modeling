@@ -269,7 +269,7 @@ Dr.&nbsp;Allison Theobold
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_b825e878" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_d4782258" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -337,7 +337,7 @@ Dr.&nbsp;Allison Theobold
 <p>Do you find anything notable?</p>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_b0df7717" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_86957bf9" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -401,7 +401,7 @@ Dr.&nbsp;Allison Theobold
 <p>Do you find anything notable?</p>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_22667581" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_a3e5e7bd" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -448,7 +448,48 @@ Dr.&nbsp;Allison Theobold
 <a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a>
 </div>
 <script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
-<!-- * `birth_month`: It is believed that players who are born earlier in the month are more likely to become professional athletes, because they are on the older end of the league for their age growing up.  We will see if that's true. -->
+</section>
+<section id="which-of-these-variables-are-associated-with-scoring-points" class="slide level2">
+<h2>Which of these variables are associated with scoring points?</h2>
+<p>We will answer this question with a <em>predictive model</em>, that uses information in some <em>predictor</em> variables to create a process for guessing the value of the <em>target</em> variable (<code>points</code>).</p>
+<p>To decide which variables are worth including in our eventual model, we need to understand how they associate with the target variable of <code>points</code>.</p>
+</section>
+<section id="numeric-variables-1" class="slide level2">
+<h2>Numeric Variables</h2>
+<p>Consider the <em>numeric</em> variables in this dataset. Which ones might be reasonable to use in our model?</p>
+<ul>
+<li><p>Use the code provided to visualize the relationship between <code>points</code> and a few of these potential predictors.</p></li>
+<li><p>Decide which variable(s) seem to have the strongest relationship with our target variable (<code>points</code>).</p></li>
+</ul>
+<div class="fragment">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>You may have noticed that <code>goals</code>, <code>assists</code>, and <code>plusminus</code> are highly associated with <code>points</code>. Why might it be a bad idea to use these as predictors in our model?</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="categorical-variables-1" class="slide level2">
+<h2>Categorical Variables</h2>
+<p>Consider the <em>categorical</em> variables in this dataset. Which ones might be reasonable to use in our model?</p>
+<ul>
+<li><p>Use the code provided to visualize the relationship between <code>points</code> and a few of these potential predictors.</p></li>
+<li><p>Decide which variable(s) seem to have the strongest relationship with our target variable (<code>points</code>).</p></li>
+</ul>
+</section>
+<section id="multiple-variables" class="slide level2">
+<h2>Multiple Variables</h2>
+<p>Sometimes, the way one variable associates with <code>points</code> might be different depending on another variables.</p>
+<p>For example, it is believed that players who are born earlier in the month are more likely to become professional athletes.</p>
+<p>But! It may be that this trend only applies in some countries, since not all countries have the same youth sports system. Let’s see!</p>
 <!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
 <!-- social and historical context to work responsibly with data. -->
 <!-- analogy with "other" category for race, gender -->

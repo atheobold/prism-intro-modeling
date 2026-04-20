@@ -210,3 +210,82 @@ Make sure your re-visualize your variables after making the cleaning changes, to
 #| label: cleaning-check
 
 ```
+
+# Step 3: Choosing Candidate Predictors
+
+We will answer this question with a *predictive model*, that uses information in
+some *predictor* variables to create a process for guessing the value of the
+*target* variable (`points`).
+
+To decide which variables are worth including in our eventual model, we need to
+understand how they associate with the target variable of `points`.
+
+## Numeric Variables
+
+Consider the *numeric* variables in this dataset.  Which ones might be
+reasonable to use in our model?
+
+Use the code provided to visualize the relationship between `points` and a few
+of these potential predictors. Decide which variable(s) seem to have the 
+strongest relationship with our target variable (`points`). 
+
+```{python}
+#| label: ggplot-template-two-numerical
+
+(
+  ggplot(data = data_nhl, 
+       mapping = aes(x = "age", y = "points")
+       ) +
+  geom_point() +
+  geom_smooth()
+)
+```
+
+## Categorical Variables
+
+Consider the *categorical* variables in this dataset.  Which ones might be
+reasonable to use in our model?
+
+Use the code provided to visualize the relationship between `points` and a few
+of these potential predictors. Decide which variable(s) seem to have the 
+strongest relationship with our target variable (`points`). 
+
+```{python}
+#| label: ggplot-template-two-numerical
+
+from plotnine.geoms import geom_density_ridges
+
+(
+  ggplot(data = data_nhl, 
+         mapping = aes(x = "points", y = "position_type")
+         ) +
+  geom_density_ridges()
+)
+```
+
+## Multiple Variables
+
+Sometimes, the way one variable associates with `points` might be different
+depending on another variables.
+
+It is believed that players who are born earlier in the month are more likely to
+become professional athletes, because they are on the older end of the league
+for their age growing up.  
+
+It may be that this trend only applies in some countries, since not all
+countries have the same youth sports system.
+
+Let's see!
+
+```{python}
+#| label: points-by-birth-faceted-by-country
+
+(
+  ggplot(data = data_nhl, 
+         mapping = aes(x = "points", y = "birth_month")
+         ) +
+  geom_density_ridges() +
+  facet_wrap(~"can_or_usa") 
+)
+```
+

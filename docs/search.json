@@ -138,5 +138,33 @@
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "Step 3: Chooing Candidate Predictors",
     "text": "Step 3: Chooing Candidate Predictors\n\nHeated Rivalry Shane Hollander GIFfrom Heated Rivalry GIFs"
+  },
+  {
+    "objectID": "slides.html#which-of-these-variables-are-associated-with-scoring-points",
+    "href": "slides.html#which-of-these-variables-are-associated-with-scoring-points",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Which of these variables are associated with scoring points?",
+    "text": "Which of these variables are associated with scoring points?\nWe will answer this question with a predictive model, that uses information in some predictor variables to create a process for guessing the value of the target variable (points).\nTo decide which variables are worth including in our eventual model, we need to understand how they associate with the target variable of points."
+  },
+  {
+    "objectID": "slides.html#numeric-variables-1",
+    "href": "slides.html#numeric-variables-1",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Numeric Variables",
+    "text": "Numeric Variables\nConsider the numeric variables in this dataset. Which ones might be reasonable to use in our model?\n\nUse the code provided to visualize the relationship between points and a few of these potential predictors.\nDecide which variable(s) seem to have the strongest relationship with our target variable (points).\n\n\n\n\n\n\n\n\nWarning\n\n\nYou may have noticed that goals, assists, and plusminus are highly associated with points. Why might it be a bad idea to use these as predictors in our model?"
+  },
+  {
+    "objectID": "slides.html#categorical-variables-1",
+    "href": "slides.html#categorical-variables-1",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Categorical Variables",
+    "text": "Categorical Variables\nConsider the categorical variables in this dataset. Which ones might be reasonable to use in our model?\n\nUse the code provided to visualize the relationship between points and a few of these potential predictors.\nDecide which variable(s) seem to have the strongest relationship with our target variable (points)."
+  },
+  {
+    "objectID": "slides.html#multiple-variables",
+    "href": "slides.html#multiple-variables",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Multiple Variables",
+    "text": "Multiple Variables\nSometimes, the way one variable associates with points might be different depending on another variables.\nFor example, it is believed that players who are born earlier in the month are more likely to become professional athletes.\nBut! It may be that this trend only applies in some countries, since not all countries have the same youth sports system. Let’s see!"
   }
 ]
