@@ -31,13 +31,16 @@ Materials for this workshop can be found here:
 <https://bit.ly/prism-intro-modeling>
 :::
 
-<!-- good job i love you: https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446 -->
-
 <!-- ilya wink: https://tenor.com/view/heated-rivalry-ilya-rozanov-long-game-wink-shane-hollander-gif-1151741843253260055 -->
 
-<!-- this is awesome: https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672 -->
+# Our Goal
 
-<!-- girl: https://tenor.com/view/maria-girl-heated-rivalry-hr-gurl-gif-6064918331708214442 -->
+1. Cleaning the data
+2. Visualizing relationships
+3. Choosing predictor (input) variables
+4. Choosing between competing models
+5. Interpreting model conclusions
+6. Ethics considerations
 
 # Today's Data - NHL
 
@@ -409,7 +412,7 @@ data_nhl["can_or_usa"] = (
 Let's re-visualize the "problem" variables to make sure our cleaning changes
 accomplished what we hoped!
 
-## Step 3: Chooing Candidate Predictors
+# Step 3: Chooing Candidate Predictors
 
 <div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="80%"><a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
@@ -544,6 +547,207 @@ dat_nhl |>
 )
 ```
 
+## Make Predictor Recipes
+
+Now, we are ready to prepare our **recipes**: the different combinations of
+predictors that we think could produce a good model.
+
+We'll try two recipes today:
+
+* One with *all* the possible predictors
+
+* One with only the three "best" predictors that you choose.
+
+## R & Python Code
+
+**R Code**
+
+::: {.midi}
+```{r}
+#| label: recipes-R
+#| echo: true
+#| code-line-numbers: false
+
+library(tidymodels)
+
+rec_all <- recipe(points ~ height + weight + age + can_or_usa + 
+                  birth_month + position_code + season + team + 
+                  penalty_minutes, data = data_nhl)
+
+rec_best <- recipe(points ~ position_type + season + team, 
+                   data = data_nhl)
+```
+:::
+
+**Python Code**
+
+::: {.midi}
+```{python}
+#| echo: true
+#| label: specify-variables-python
+#| code-line-numbers: false
+
+vars_all = ["height", "weight", "age", "can_or_usa", "birth_month", 
+            "position_code", "season", "team", "penalty_minutes"]
+
+vars_best = ["position_type", "season", "team"]
+```
+:::
+
+## Specifying Candidate Models
+
+::: {.midi}
+The other decision we must make  is which *model types* to try.
+
+In this analysis, we will try *Linear Regression* and a *Decision Tree*. 
+
+- Linear regression is a natural choice since we have a continuous numerical
+outcome and the interpretations are quite simple. 
+
+- A decision tree is a simple choice for a non-statistical model that also has
+easy interpretations. 
+
+
+::: {.callout-warning}
+There are many, many, many different model types that we can use for any given
+modeling problem.
+
+There is no magic formula for deciding which ones to try.  As you get more
+experience with modeling, you'll develop more instincts for what range of
+options to try.
+:::
+:::
+
+## R & Python Code
+
+**R Code**
+
+::: {.midi}
+```{r}
+#| code-line-numbers: false
+#| echo: true
+
+lr_spec <- linear_reg() |>
+  set_mode("regression")
+
+dt_spec <- decision_tree(min_n = 10) |>
+  set_mode("regression") 
+```
+:::
+
+**Python Code**
+
+::: {.midi}
+```{python}
+#| code-line-numbers: false
+#| echo: true
+
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+
+lr_spec = LinearRegression()
+
+dt_spec = DecisionTreeRegressor(min_samples_leaf = 10)
+```
+
+<!-- ::: {.callout-important} -->
+<!-- A decision tree has a **hyperparameter** we can specify---`min_samples_leaf` or -->
+<!-- `min_n`. This parameter represents the smallest number of observations that a -->
+<!-- leaf (a part of the tree) is allowed to have. -->
+<!-- ::: -->
+:::
+
+## Pre-Processing Options
+
+Recall that we noticed a few interesting things in our exploratory data
+analysis:
+
+* `penalty_minutes` is very right-skewed 
+
+* Birth country seems to impact how birth month impacts the target. 
+
+We will add a *transformation* and an *interaction* to our workflow.
+
+## R & Python Code
+
+</br>
+
+::: columns
+::: {.column width="48%"}
+### R Code
+
+Specify transformer **and** variable(s) **at the same time**
+
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+### Python Code
+
+Specify "general" transformer, then apply the transformer to specific columns.
+
+<div class="tenor-gif-embed" data-postid="12103154902932132925" data-share-method="host" data-aspect-ratio="1.33125" data-width="70%"><a href="https://tenor.com/view/hudconfansdr-gif-12103154902932132925">Hudconfansdr GIF</a>from <a href="https://tenor.com/search/hudconfansdr-gifs">Hudconfansdr GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+:::
+:::
+
+## Combining Data & Models
+
+</br>
+
+Finally, we will try all our different **model type** options with all our
+different **recipe and preprocessing** choices.
+
+Each of these candidate options is called a **workflow** or a **pipeline**.
+
+## R & Python Code
+
+**R Code (Template)**
+
+::: {.midi}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+workflow() |>
+  add_model() |>
+  add_recipe()
+```
+:::
+
+</br>
+
+**Python Code (Template)**
+
+::: {.midi}
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+from sklearn.pipeline import make_pipeline
+
+make_pipeline(recipe, model)
+
+```
+:::
+
+## 
+
+<div class="tenor-gif-embed" data-postid="6064918331708214442" data-share-method="host" data-aspect-ratio="1.20874" data-width="85%"><a href="https://tenor.com/view/maria-girl-heated-rivalry-hr-gurl-gif-6064918331708214442">Maria Girl GIF</a>from <a href="https://tenor.com/search/maria-gifs">Maria GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+# Step 4 -- Choosing between Competing Models
+
+# Step 5 -- Interpreting Model Conclusions
+
+<div class="tenor-gif-embed" data-postid="17082747758147388672" data-share-method="host" data-aspect-ratio="0.935743" data-width="60%"><a href="https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672">Heated Rivalry Awesome GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+# Step 6 -- Ethical Considerations
+
+<div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
 <!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
 <!-- social and historical context to work responsibly with data. -->
 
@@ -551,3 +755,7 @@ dat_nhl |>
 <!-- analogy with "other" category for race, gender -->
 <!-- analogy with student success (what features are associated with higher GPAs,  -->
 <!-- college degrees) -->
+
+## 
+
+<div class="tenor-gif-embed" data-postid="15949382497529003446" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446">Heated Rivalry Ilya Rozanov GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>

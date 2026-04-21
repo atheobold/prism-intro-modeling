@@ -215,11 +215,20 @@ Dr.&nbsp;Allison Theobold
 <p>Materials for this workshop can be found here:</p>
 <p><a href="https://bit.ly/prism-intro-modeling" class="uri">https://bit.ly/prism-intro-modeling</a></p>
 </div>
-<!-- good job i love you: https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446 -->
 <!-- ilya wink: https://tenor.com/view/heated-rivalry-ilya-rozanov-long-game-wink-shane-hollander-gif-1151741843253260055 -->
-<!-- this is awesome: https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672 -->
-<!-- girl: https://tenor.com/view/maria-girl-heated-rivalry-hr-gurl-gif-6064918331708214442 -->
 </section>
+<section id="our-goal" class="title-slide slide level1 center scrollable">
+<h1>Our Goal</h1>
+<ol type="1">
+<li>Cleaning the data</li>
+<li>Visualizing relationships</li>
+<li>Choosing predictor (input) variables</li>
+<li>Choosing between competing models</li>
+<li>Interpreting model conclusions</li>
+<li>Ethics considerations</li>
+</ol>
+</section>
+
 <section>
 <section id="todays-data---nhl" class="title-slide slide level1 center">
 <h1>Today’s Data - NHL</h1>
@@ -269,7 +278,7 @@ Dr.&nbsp;Allison Theobold
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_d4782258" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_f007007f" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -337,7 +346,7 @@ Dr.&nbsp;Allison Theobold
 <p>Do you find anything notable?</p>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_86957bf9" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_935244d0" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -401,7 +410,7 @@ Dr.&nbsp;Allison Theobold
 <p>Do you find anything notable?</p>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_a3e5e7bd" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_1ba814b7" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -441,9 +450,10 @@ Dr.&nbsp;Allison Theobold
 <section id="check-in" class="slide level2">
 <h2>Check-in!</h2>
 <p>Let’s re-visualize the “problem” variables to make sure our cleaning changes accomplished what we hoped!</p>
-</section>
-<section id="step-3-chooing-candidate-predictors" class="slide level2">
-<h2>Step 3: Chooing Candidate Predictors</h2>
+</section></section>
+<section>
+<section id="step-3-chooing-candidate-predictors" class="title-slide slide level1 center">
+<h1>Step 3: Chooing Candidate Predictors</h1>
 <div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="80%">
 <a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a>
 </div>
@@ -490,11 +500,187 @@ Dr.&nbsp;Allison Theobold
 <p>Sometimes, the way one variable associates with <code>points</code> might be different depending on another variables.</p>
 <p>For example, it is believed that players who are born earlier in the month are more likely to become professional athletes.</p>
 <p>But! It may be that this trend only applies in some countries, since not all countries have the same youth sports system. Let’s see!</p>
+</section>
+<section id="make-predictor-recipes" class="slide level2">
+<h2>Make Predictor Recipes</h2>
+<p>Now, we are ready to prepare our <strong>recipes</strong>: the different combinations of predictors that we think could produce a good model.</p>
+<p>We’ll try two recipes today:</p>
+<ul>
+<li><p>One with <em>all</em> the possible predictors</p></li>
+<li><p>One with only the three “best” predictors that you choose.</p></li>
+</ul>
+</section>
+<section id="r-python-code-2" class="slide level2">
+<h2>R &amp; Python Code</h2>
+<p><strong>R Code</strong></p>
+<div class="midi">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>rec_all <span class="ot">&lt;-</span> <span class="fu">recipe</span>(points <span class="sc">~</span> height <span class="sc">+</span> weight <span class="sc">+</span> age <span class="sc">+</span> can_or_usa <span class="sc">+</span> </span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>                  birth_month <span class="sc">+</span> position_code <span class="sc">+</span> season <span class="sc">+</span> team <span class="sc">+</span> </span>
+<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>                  penalty_minutes, <span class="at">data =</span> data_nhl)</span>
+<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>rec_best <span class="ot">&lt;-</span> <span class="fu">recipe</span>(points <span class="sc">~</span> position_type <span class="sc">+</span> season <span class="sc">+</span> team, </span>
+<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><strong>Python Code</strong></p>
+<div class="midi">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>vars_all <span class="op">=</span> [<span class="st">"height"</span>, <span class="st">"weight"</span>, <span class="st">"age"</span>, <span class="st">"can_or_usa"</span>, <span class="st">"birth_month"</span>, </span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"position_code"</span>, <span class="st">"season"</span>, <span class="st">"team"</span>, <span class="st">"penalty_minutes"</span>]</span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a>vars_best <span class="op">=</span> [<span class="st">"position_type"</span>, <span class="st">"season"</span>, <span class="st">"team"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="specifying-candidate-models" class="slide level2">
+<h2>Specifying Candidate Models</h2>
+<div class="midi">
+<p>The other decision we must make is which <em>model types</em> to try.</p>
+<p>In this analysis, we will try <em>Linear Regression</em> and a <em>Decision Tree</em>.</p>
+<ul>
+<li><p>Linear regression is a natural choice since we have a continuous numerical outcome and the interpretations are quite simple.</p></li>
+<li><p>A decision tree is a simple choice for a non-statistical model that also has easy interpretations.</p></li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>There are many, many, many different model types that we can use for any given modeling problem.</p>
+<p>There is no magic formula for deciding which ones to try. As you get more experience with modeling, you’ll develop more instincts for what range of options to try.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="r-python-code-3" class="slide level2">
+<h2>R &amp; Python Code</h2>
+<p><strong>R Code</strong></p>
+<div class="midi">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a>lr_spec <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><strong>Python Code</strong></p>
+<div class="midi">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a>lr_spec <span class="op">=</span> LinearRegression()</span>
+<span id="cb7-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a aria-hidden="true" tabindex="-1"></a>dt_spec <span class="op">=</span> DecisionTreeRegressor(min_samples_leaf <span class="op">=</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- ::: {.callout-important} -->
+<!-- A decision tree has a **hyperparameter** we can specify---`min_samples_leaf` or -->
+<!-- `min_n`. This parameter represents the smallest number of observations that a -->
+<!-- leaf (a part of the tree) is allowed to have. -->
+<!-- ::: -->
+</div>
+</section>
+<section id="pre-processing-options" class="slide level2">
+<h2>Pre-Processing Options</h2>
+<p>Recall that we noticed a few interesting things in our exploratory data analysis:</p>
+<ul>
+<li><p><code>penalty_minutes</code> is very right-skewed</p></li>
+<li><p>Birth country seems to impact how birth month impacts the target.</p></li>
+</ul>
+<p>We will add a <em>transformation</em> and an <em>interaction</em> to our workflow.</p>
+</section>
+<section id="r-python-code-4" class="slide level2">
+<h2>R &amp; Python Code</h2>
+<p><br></p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<h3 id="r-code-2">R Code</h3>
+<p>Specify transformer <strong>and</strong> variable(s) <strong>at the same time</strong></p>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<h3 id="python-code-2">Python Code</h3>
+<p>Specify “general” transformer, then apply the transformer to specific columns.</p>
+<div class="tenor-gif-embed" data-postid="12103154902932132925" data-share-method="host" data-aspect-ratio="1.33125" data-width="70%">
+<a href="https://tenor.com/view/hudconfansdr-gif-12103154902932132925">Hudconfansdr GIF</a>from <a href="https://tenor.com/search/hudconfansdr-gifs">Hudconfansdr GIFs</a>
+</div>
+<script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
+</div></div>
+</section>
+<section id="combining-data-models" class="slide level2">
+<h2>Combining Data &amp; Models</h2>
+<p><br></p>
+<p>Finally, we will try all our different <strong>model type</strong> options with all our different <strong>recipe and preprocessing</strong> choices.</p>
+<p>Each of these candidate options is called a <strong>workflow</strong> or a <strong>pipeline</strong>.</p>
+</section>
+<section id="r-python-code-5" class="slide level2">
+<h2>R &amp; Python Code</h2>
+<p><strong>R Code (Template)</strong></p>
+<div class="midi">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><br></p>
+<p><strong>Python Code (Template)</strong></p>
+<div class="midi">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a>make_pipeline(recipe, model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<div class="tenor-gif-embed" data-postid="6064918331708214442" data-share-method="host" data-aspect-ratio="1.20874" data-width="85%">
+<a href="https://tenor.com/view/maria-girl-heated-rivalry-hr-gurl-gif-6064918331708214442">Maria Girl GIF</a>from <a href="https://tenor.com/search/maria-gifs">Maria GIFs</a>
+</div>
+<script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
+</section></section>
+<section id="step-4-choosing-between-competing-models" class="title-slide slide level1 center">
+<h1>Step 4 – Choosing between Competing Models</h1>
+
+</section>
+
+<section id="step-5-interpreting-model-conclusions" class="title-slide slide level1 center">
+<h1>Step 5 – Interpreting Model Conclusions</h1>
+<div class="tenor-gif-embed" data-postid="17082747758147388672" data-share-method="host" data-aspect-ratio="0.935743" data-width="60%">
+<a href="https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672">Heated Rivalry Awesome GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a>
+</div>
+<script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
+</section>
+
+<section>
+<section id="step-6-ethical-considerations" class="title-slide slide level1 center">
+<h1>Step 6 – Ethical Considerations</h1>
+<div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="100%">
+<a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a>
+</div>
+<script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
 <!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
 <!-- social and historical context to work responsibly with data. -->
 <!-- analogy with "other" category for race, gender -->
 <!-- analogy with student success (what features are associated with higher GPAs,  -->
 <!-- college degrees) -->
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<div class="tenor-gif-embed" data-postid="15949382497529003446" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%">
+<a href="https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446">Heated Rivalry Ilya Rozanov GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a>
+</div>
+<script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
 
 
 </section></section>

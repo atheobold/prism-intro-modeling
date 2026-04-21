@@ -3,7 +3,7 @@ title: "Introduction to Predictive Modeling with Pipelines"
 jupyter: python3
 ---
 
-## Data Context 
+# Data Context 
 
 The data for today is taken from [this Kaggle dataset](https://www.kaggle.com/datasets/xavya77/nhl04to18) of NHL player
 statistics. The data contain statistics on every NHL player for the 
@@ -289,3 +289,118 @@ Let's see!
 )
 ```
 
+### Make Predictor Recipes
+
+Now, we are ready to prepare our **recipes**: the different combinations of
+predictors that we think could produce a good model.
+
+We'll try two recipes today:
+
+* One with *all* the possible predictors
+
+* One with only the three "best" predictors that you choose.
+
+```{python}
+vars_all = ["height", "weight", "age", "can_or_usa", "birth_month", 
+            "position_code", "season", "team", "penalty_minutes"]
+
+vars_best = ["position_type", "season", "team"]
+```
+
+## Specifying Candidate Models
+
+The other decision we must make  is which *model types* to try.
+
+In this analysis, we will try *Linear Regression* and a *Decision Tree*. 
+
+- Linear regression is a natural choice since we have a continuous numerical
+outcome and the interpretations are quite simple. 
+
+- A decision tree is a simple choice for a non-statistical model that also has
+easy interpretations. 
+
+```{python}
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+
+lr_spec = LinearRegression()
+
+dt_spec = DecisionTreeRegressor(min_samples_leaf = 10)
+```
+
+## Pre-Processing Options
+
+Recall that we noticed a few interesting things in our exploratory data
+analysis:
+
+* `penalty_minutes` is very right-skewed 
+
+* Birth country seems to impact how birth month impacts the target. 
+
+We will add a *tranformation* and an *interaction* to our workflow.
+
+```{python}
+#| label: make-general-transformers
+
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+
+categorical_transformer = Pipeline([
+    ("onehot", OneHotEncoder(drop = "first", handle_unknown.= "ignore"))
+])
+
+log_transformer = Pipeline([
+    ("log", FunctionTransformer(np.log1p, validate = True))
+])
+
+interact_transformer = Pipleline([
+  ("onehot", OneHotEncoder(drop = "first")),
+   ("interact", PolynomialFeatures(interaction_only = True, include_bias = True))
+])
+```
+
+```{python}
+#| label: use-transformers-on-specific-columns
+
+rec_all = ColumnTransformer([
+    ("cat", categorical_transformer, ["position_code", "season", "team"]),
+    ("int", interact_transformer, ["can_or_usa", "birth_month"]),
+    ("log", log_transformer, ["penalty_minutes"])
+    ("num", "passthrough", ["age", "height", "weight"])
+])
+
+rec_best = ColumnTransformer([
+    ("cat", categorical_transformer, ["position_type", "season", "team])
+])
+
+```
+
+### Combining Data & Models
+
+Finally, we will try all our different **model type** options with all our
+different **recipe and preprocessing** choices.
+
+Each of these candidate options is called a **workflow** or a **pipeline**.
+
+```{python}
+#| label: specify-model-and-transformers
+
+from sklearn.pipeline import make_pipeline
+
+# Linear regression with all predictors
+wflow_lr_all = make_pipeline(rec_all, lr_spec)
+
+# Linear regression with best predictors
+wflow_lr_best = make_pipeline(rec_best, lr_spec)
+
+# Decision tree with all predictors
+wflow_dt_all = make_pipeline(rec_all, dt_spec)
+
+# Decision tree with best predictors
+wflow_dt_best = make_pipeline(rec_best, dt_spec)
+
+```
+
+
+# Step 4 -- Choosing between Competing Models

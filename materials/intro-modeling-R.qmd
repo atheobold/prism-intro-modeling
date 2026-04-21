@@ -3,7 +3,7 @@ title: "Introduction to Predictive Modeling with Pipelines"
 format: html
 ---
 
-## Data Context 
+# Data Context 
 
 The data for today is taken from [this Kaggle dataset](https://www.kaggle.com/datasets/xavya77/nhl04to18) of NHL player
 statistics. The data contain statistics on every NHL player for the 
@@ -272,10 +272,10 @@ dat_nhl |>
   facet_wrap(~can_or_usa)
 ```
 
+## Make predictor recipes
 
-### Make predictor recipes
-
-Now, we are ready to prepare our **recipes**: the different combinations of predictors that we think could produce a good model.
+Now, we are ready to prepare our **recipes**: the different combinations of
+predictors that we think could produce a good model.
 
 We'll try two recipes today:
 
@@ -284,30 +284,26 @@ We'll try two recipes today:
 * One with only the three "best" predictors that you choose.
 
 ```{r}
-rec_all <- recipe(points ~ height + weight + age + can_or_usa + birth_month + position_code + season + team + penalty_minutes, data = dat_nhl)
+library(tidymodels)
+
+rec_all <- recipe(points ~ height + weight + age + can_or_usa + 
+                    birth_month + position_code + season + team + 
+                    penalty_minutes, data = dat_nhl)
 
 rec_best <- recipe(points ~ position_type + season + team , data = dat_nhl)
 ```
 
+## Specifying Candidate Models
 
+The other decision we must make  is which *model types* to try.
 
+In this analysis, we will try *Linear Regression* and a *Decision Tree*. 
 
-## 3. Establish candidate workflows
+- Linear regression is a natural choice since we have a continuous numerical
+outcome and the interpretations are quite simple. 
 
-
-### Candidate model specifications
-
-The other decision we must make - besides which *predictors* to include - is which *model types* to try.
-
-In this analysis, we will try *Linear Regression* and a *Decision Tree*.  The Linear Regression has no additional decisions to make, but for the Decision Tree, we need to choose **hyperparameters**. 
-
-:::{.callout-warning}
-
-There are many, many, many different model types - most with infinite hyperparameter options - that we can use for any given modeling problem.
-
-There is no magic formula for deciding which ones to try.  As you get more experience with machine learning, you'll develop more instincts for what range of options to try.
-
-:::
+- A decision tree is a simple choice for a non-statistical model that also has
+easy interpretations. 
 
 ```{r}
 lr_spec <- linear_reg() |>
@@ -317,14 +313,10 @@ dt_spec <- decision_tree(min_n = 10) |>
   set_mode("regression") 
 ```
 
+## Pre-Processing Options
 
-
-
-:::
-
-### Pre-processing options
-
-Recall that we noticed a few interesting things in our exploratory data analysis:
+Recall that we noticed a few interesting things in our exploratory data
+analysis:
 
 * `penalty_minutes` is very right-skewed 
 
@@ -333,6 +325,8 @@ Recall that we noticed a few interesting things in our exploratory data analysis
 We will add a *tranformation* and an *interaction* to our workflow.
 
 ```{r}
+#| label: create-recipes-for-variable-transformation
+
 rec_all <- rec_all |>
   step_log(penalty_minutes) |>
   step_dummy(can_or_usa, position_code) |>
@@ -344,43 +338,39 @@ rec_best <- rec_best |>
   step_interact( ~ birth_month*contains("can_or_usa"))
 ```
 
+### Combining Data & Models
 
-
-
-
-
-
-
-### Data + model combinations
-
-Finally, we will try all our different **model type** options with all our different **recipe and preprocessing** choices.
+Finally, we will try all our different **model type** options with all our
+different **recipe and preprocessing** choices.
 
 Each of these candidate options is called a **workflow** or a **pipeline**.
 
 ```{r}
+#| label: specify-model-and-transformers
+
+# Linear regression with all predictors
 wflow_lr_all <- workflow() |>
   add_model(lr_spec) |>
   add_recipe(rec_all)
 
+# Linear regression with best predictors
 wflow_lr_best <- workflow() |>
   add_model(lr_spec) |>
   add_recipe(rec_best)
 
+# Decision tree with all predictors
 wflow_dt_all <- workflow() |>
   add_model(dt_spec) |>
   add_recipe(rec_all)
 
+# Decision tree with best predictors
 wflow_dt_best <- workflow() |>
   add_model(dt_spec) |>
   add_recipe(rec_best)
+
 ```
 
-
-
-
-
-
-## 4. Assess workflows
+# Step 4 -- Choosing between Competing Models
 
 Whew!  
 
