@@ -238,11 +238,13 @@ Either way, we will choose to omit them, since they might be misleading to our r
 
 ## R & Python Code
 
-::: columns
-::: {.column width="48%"}
-### R Code
+**R Code**
 
+::: {.midi}
 ```{r}
+#| echo: true
+#| code-line-numbers: false
+
 data_nhl <- data_nhl |>
   filter(
     points < 200,
@@ -252,20 +254,19 @@ data_nhl <- data_nhl |>
 ```
 :::
 
-::: {.column width="4%"}
-:::
+**Python Code**
 
-::: {.column width="48%"}
-### Python Code
-
+::: {.midi}
 ```{python}
+#| echo: true
+#| code-line-numbers: false
+
 data_nhl = data_nhl[
     (data_nhl["points"] < 200) &
     (data_nhl["penalty_minutes"] < 400) &
     (data_nhl["games_played"] > 50)
 ]
 ```
-:::
 :::
 
 <!-- ::: {.callout-important} -->
@@ -357,11 +358,7 @@ far too many different values to reasonable use.
 - We will use the `country` variable only, and we will limit its values to 
 `"Canada"`, `"United States"`, or `"Other"`.
 
-## R & Python Code
-
-::: columns
-::: {.column width="48%"}
-### R Code
+## R Code
 
 ```{r}
 #| echo: true
@@ -377,13 +374,7 @@ data_nhl <- data_nhl |>
   ) 
 ```
 
-:::
-
-::: {.column width="4%"}
-:::
-
-::: {.column width="48%"}
-### Python Code
+## Python Code
 
 ```{python}
 
@@ -404,7 +395,28 @@ data_nhl["can_or_usa"] = (
          "Other")
   )
 ```
+
+## Data Ethics & Categorical Variables
+
+::: {.midi}
+- Creating an "Other" category might feel fairly benign, but this isn't always 
+the case. 
+    * Let's consider a different variable---gender. 
 :::
+
+. . .
+
+::: {.midi}
+- Suppose we lump all the PALiISaDS students not identifying as a woman or a man
+into a category named "Other". 
+    * What message does that send to students who are non-binary or trans? 
+:::
+
+. . .
+
+::: {.midi}
+- What if we created two levels for racial groups---"White" and "Non-White".
+    * What message does that send to students of color? 
 :::
 
 ## Check-in!
@@ -493,18 +505,19 @@ ggplot(data = data_nhl,
   geom_density_ridges()
 ```
 
+<!-- THIS NEEDS FIXED -->
 ```{python}
 #| label: plotnine-template-num-cat
 #| echo: false
 #| eval: false
 
-from plotnine.geoms import geom_density_ridges
+from plotnine.geoms import geom_density_2d
 
 (
   ggplot(data = data_nhl, 
          mapping = aes(x = "points", y = "position_type")
          ) +
-  geom_density_ridges()
+  geom_density_2d()
 )
 ```
 
@@ -524,7 +537,7 @@ countries have the same youth sports system. Let's see!
 #| echo: false
 #| eval: false
 
-dat_nhl |>
+data_nhl |>
   mutate(birth_month = as.factor(birth_month)) |> 
   ggplot(data = data_nhl, 
          mapping = aes(x = points, y = birth_month)
@@ -678,6 +691,20 @@ We will add a *transformation* and an *interaction* to our workflow.
 
 Specify transformer **and** variable(s) **at the same time**
 
+```{r}
+#| label: create-recipes-for-variable-transformation
+
+rec_all <- rec_all |>
+  step_log(penalty_minutes) |>
+  step_dummy(can_or_usa, position_code) |>
+  step_interact(~ birth_month*contains("can_or_usa"))
+
+rec_best <- rec_best |>
+  step_log(penalty_minutes) |>
+  step_dummy(can_or_usa, position_code) |>
+  step_interact( ~ birth_month*contains("can_or_usa"))
+```
+
 :::
 
 ::: {.column width="4%"}
@@ -689,6 +716,49 @@ Specify transformer **and** variable(s) **at the same time**
 Specify "general" transformer, then apply the transformer to specific columns.
 
 <div class="tenor-gif-embed" data-postid="12103154902932132925" data-share-method="host" data-aspect-ratio="1.33125" data-width="70%"><a href="https://tenor.com/view/hudconfansdr-gif-12103154902932132925">Hudconfansdr GIF</a>from <a href="https://tenor.com/search/hudconfansdr-gifs">Hudconfansdr GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+```{python}
+#| label: make-general-transformers
+
+import numpy as np
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer, PolynomialFeatures
+
+categorical_transformer = Pipeline([
+    ("onehot", OneHotEncoder(drop="first", handle_unknown="ignore"))
+])
+
+log_transformer = Pipeline([
+    ("log", FunctionTransformer(np.log1p, validate = True))
+])
+
+interact_transformer = Pipeline([
+  ("onehot", OneHotEncoder(drop = "first")),
+  ("interact", PolynomialFeatures(interaction_only=True, include_bias=False))
+])
+```
+
+```{python}
+#| label: use-transformers-on-specific-columns
+
+from sklearn.compose import ColumnTransformer
+
+rec_all = ColumnTransformer([
+    ("cat", categorical_transformer, ["position_code", "season", "team"]),
+    ("int", interact_transformer, ["can_or_usa", "birth_month"]),
+    ("log", log_transformer, ["penalty_minutes"]),
+    ("num", "passthrough", ["age", "height", "weight"])
+    ],
+    remainder = "drop"
+)
+
+rec_best = ColumnTransformer([
+    ("cat", categorical_transformer, ["position_type", "season", "team"])],
+    remainder="drop")
+
+```
+
 :::
 :::
 
@@ -715,6 +785,31 @@ workflow() |>
   add_model() |>
   add_recipe()
 ```
+
+```{r}
+#| label: specify-model-and-transformers-R
+
+# Linear regression with all predictors
+wflow_lr_all <- workflow() |>
+  add_model(lr_spec) |>
+  add_recipe(rec_all)
+
+# Linear regression with best predictors
+wflow_lr_best <- workflow() |>
+  add_model(lr_spec) |>
+  add_recipe(rec_best)
+
+# Decision tree with all predictors
+wflow_dt_all <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(rec_all)
+
+# Decision tree with best predictors
+wflow_dt_best <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(rec_best)
+
+```
 :::
 
 </br>
@@ -728,8 +823,29 @@ workflow() |>
 #| code-line-numbers: false
 
 from sklearn.pipeline import make_pipeline
+from sklearn.base import clone
 
-make_pipeline(recipe, model)
+make_pipeline(clone(recipe), clone(model))
+
+```
+
+```{python}
+#| label: specify-model-and-transformers-python
+
+from sklearn.pipeline import make_pipeline
+from sklearn.base import clone
+
+# Linear regression with all predictors
+wflow_lr_all = make_pipeline(clone(rec_all), clone(lr_spec))
+
+# Linear regression with best predictors
+wflow_lr_best = make_pipeline(clone(rec_best), clone(lr_spec))
+
+# Decision tree with all predictors
+wflow_dt_all = make_pipeline(clone(rec_all), clone(dt_spec))
+
+# Decision tree with best predictors
+wflow_dt_best = make_pipeline(clone(rec_best), clone(dt_spec))
 
 ```
 :::
@@ -740,19 +856,358 @@ make_pipeline(recipe, model)
 
 # Step 4 -- Choosing between Competing Models
 
+Everything we have done to this point was *setup*: establishing our plans for a
+few different workflows to try.
+
+## Comparing Models
+
+::: {.midi}
+Now, how will we compare the four options and see which one is most successful
+at predicting `points`?  
+:::
+
+. . .
+
+::: {.midi}
+The process goes like this:
+
+1. Randomly set aside 20% of our data rows as a *test set*.  The rest is called
+the *training set*.
+
+2. Fit all of the workflows on the *training set*.
+
+3. See how well each fitted workflow does at predicting on the *test set*.
+:::
+
+. . .
+
+::: {.small}
+:::{.callout-warning}
+In Part 2 of the workshop, you will learn about using **cross-validation** to
+choose between different models. This is essentially the process of creating
+*many different* test/training splits.
+:::
+:::
+
+## Test / Train Split
+
+**R Code**
+
+::: {.midi}
+```{r}
+#| echo: true
+#| code-line-numbers: false
+#| label: test-train-split-R
+
+set.seed(2244)
+
+split <- initial_split(data_nhl, prop = 0.8)
+
+data_nhl_train <- training(split)
+data_nhl_test <- testing(split)
+```
+:::
+
+**Python Code**
+
+::: {.midi}
+```{python}
+#| echo: true
+#| code-line-numbers: false
+#| label: test-train-split-python
+
+from sklearn.model_selection import train_test_split
+
+
+data_nhl_train, data_nhl_test = train_test_split(data_nhl, 
+                                                 test_size = 0.2, 
+                                                 random_state = 2244)
+```
+:::
+
+## Fit Our Models on the Training Data
+
+**R Code (Template)**
+
+::: {.midi}
+```{r}
+#| label: fit-models-to-training-data-R
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+
+# Fit workflow on training data
+wflow_lr_all_fit <- fit(wflow_lr_all, data = data_nhl_train)
+```
+:::
+
+</br>
+
+**Python Code (Template)**
+
+::: {.midi}
+```{python}
+#| label: fit-models-to-training-data-python-ex
+#| echo: true
+#| code-line-numbers: false
+
+# Split data into predictors
+X_train = data_nhl_train.drop(columns = ["points"])
+# and target
+y_train = data_nhl_train["points"]
+
+# Fit workflow on training data
+wflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)
+```
+
+```{python}
+#| label: fit-models-to-training-data-python-rest
+
+wflow_lr_best_fit = wflow_lr_best.fit(X_train, y_train)
+wflow_dt_all_fit = wflow_dt_all.fit(X_train, y_train)
+wflow_dt_best_fit = wflow_dt_best.fit(X_train, y_train)
+```
+:::
+
+## Assess Models on Test Data
+
+Finally, we will use these fitted models to make predictions on the test data, 
+and we'll see how close these predictions were to the true observed values for
+`points`
+
+::: {.midi}
+:::{.callout-note}
+In this analysis, we are using *root mean squared error* as our **metric** for
+the test data.  That is, we take the squared difference between the *predicted* 
+number of points a player will get and the *actual* number of points they get, 
+then we add those numbers up and take the average. 
+
+$$ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}$$
+:::
+:::
+
+## R & Python Code
+
+<!-- NEED TO FIX -->
+
+**R Code (Template)**
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+# Generate predictions
+pred_lr_all <- predict(wflow_lr_all_fit, new_data = data_nhl_test) |> 
+  bind_cols(data_nhl_test)
+
+# Compute RMSE metric
+rmse(pred_lr_all, truth = points, estimate = .pred)
+```
+
+<!-- CHECK IF THIS WORKS! -->
+```{r}
+#| label: predict-R
+#| eval: false
+#| code-line-numbers: false
+
+# Generate predictions
+pred_lr_all <- predict(wflow_lr_all_fit, 
+                       new_data = data_nhl_test) |> 
+  bind_cols(data_nhl_test)
+
+pred_lr_best <- predict(wflow_lr_best_fit, 
+                        new_data = data_nhl_test) |> 
+  bind_cols(data_nhl_test)
+
+pred_dt_all <- predict(wflow_dt_all_fit, 
+                       new_data = data_nhl_test) |> 
+  bind_cols(data_nhl_test)
+
+pred_dt_best <- predict(wflow_dt_best_fit, 
+                        new_data = data_nhl_test) |> 
+  bind_cols(data_nhl_test)
+
+
+# Compute RMSE metric
+rmse(pred_lr_all, truth = points, estimate = .pred)
+rmse(pred_lr_best, truth = points, estimate = .pred)
+rmse(pred_dt_all, truth = points, estimate = .pred)
+rmse(pred_dt_best, truth = points, estimate = .pred)
+
+```
+
+**Python Code (Template)**
+
+```{python}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+from sklearn.metrics import mean_squared_error
+
+# Split data into predictors
+X_test = data_nhl_test.drop(columns = ["points"])
+# and target
+y_test = data_nhl_test["points"]
+
+# Make predictions
+pred_lr_all = wflow_lr_all_fit.predict(X_test)
+
+# Calculate prediction errors
+rmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))
+
+```
+
+```{python}
+#| label: predict-python
+#| code-line-numbers: false
+#| results: hide
+
+from sklearn.metrics import mean_squared_error
+
+# Separate features and outcome from test set
+X_test = data_nhl_test.drop(columns = ["points"])
+y_test = data_nhl_test["points"]
+
+# Make predictions
+pred_lr_all = wflow_lr_all_fit.predict(X_test)
+pred_lr_best = wflow_lr_best_fit.predict(X_test)
+pred_dt_all = wflow_dt_all_fit.predict(X_test)
+pred_dt_best = wflow_dt_best_fit.predict(X_test)
+
+# Calculate prediction errors
+rmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))
+rmse_lr_best = np.sqrt(mean_squared_error(y_test, pred_lr_best))
+rmse_dt_all = np.sqrt(mean_squared_error(y_test, pred_dt_all))
+rmse_dt_best = np.sqrt(mean_squared_error(y_test, pred_dt_best))
+
+print("RMSE (Linear All):", rmse_lr_all)
+print("RMSE (Linear Best):", rmse_lr_best)
+print("RMSE (Tree All):", rmse_dt_all)
+print("RMSE (Tree Best):", rmse_dt_best)
+
+```
+
+## What did you get???
+
+</br>
+
+Of our four candidate workflows, which model is the "best" model? 
+
+By how much? How close is the next best model?
+
+## Fit your final model
+
+We used out test/training split to **assess our candidates**.  However, once
+we've chosen a winner, we want to make sure we use *all our data* for our
+final conclusions!
+
+. . .
+
+</br>
+
+So, we have one last model fitting task:
+
+**R Code**
+
+::: {.midi}
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+#| label: fit-final-model-R
+
+final_model <- _______ |>
+  fit(data_nhl)
+```
+:::
+
+**Python Code**
+
+::: {.midi}
+```{python}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+#| label: fit-final-model-python
+
+final_model = _______.fit(data_nhl)
+```
+:::
+
 # Step 5 -- Interpreting Model Conclusions
 
-<div class="tenor-gif-embed" data-postid="17082747758147388672" data-share-method="host" data-aspect-ratio="0.935743" data-width="60%"><a href="https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672">Heated Rivalry Awesome GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+<div class="tenor-gif-embed" data-postid="17082747758147388672" data-share-method="host" data-aspect-ratio="0.935743" data-width="40%"><a href="https://tenor.com/view/heated-rivalry-awesome-this-is-awesome-maria-so-awesome-gif-17082747758147388672">Heated Rivalry Awesome GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+## Interpreting your Final Model
+
+- Sometimes, the goal of your machine learning process is simply to **produce a 
+model**. 
+    * You can use the model to predict which players you should draft!
+
+. . .
+
+- Other times, the goal is more about **interpretation**. 
+    * You want to tell stories about the patterns in the data.
+
+. . .
+
+Since our best final model was a *decision tree*, we'll make a 
+**dendrogram** visualizing the splits. 
+
+## In R
+
+```{r}
+#| label: final-model
+#| echo: false
+
+final_model <- wflow_dt_all |> fit(data_nhl)
+```
+
+```{r}
+#| label: dendrogram-plot-R
+#| echo: true
+#| eval: true
+#| code-line-numbers: false
+
+library(rpart.plot)
+
+# Pull out the parsnip model object
+tree_fit <- extract_fit_parsnip(final_model)
+
+rpart.plot(tree_fit$fit, roundint = FALSE)
+```
+
+## In Python
+
+```{python}
+#| label: dendrogram-plot-python
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+plt.figure(figsize = (16, 8))
+plot_tree(
+    final_model.named_steps["dt_spec"],
+    feature_names = X_train.columns,
+    filled = True,
+    rounded = True,
+    max_depth = 3  # optional: limit depth for clarity
+)
+plt.show()
+```
 
 # Step 6 -- Ethical Considerations
 
-<div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+<div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="50%"><a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
 <!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
 <!-- social and historical context to work responsibly with data. -->
 
-
-<!-- analogy with "other" category for race, gender -->
 <!-- analogy with student success (what features are associated with higher GPAs,  -->
 <!-- college degrees) -->
 

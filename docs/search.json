@@ -95,7 +95,7 @@
     "href": "slides.html#r-python-code",
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "R & Python Code",
-    "text": "R & Python Code\n\n\nR Code\n\n\n\nPython Code"
+    "text": "R & Python Code\nR Code\n\n\ndata_nhl &lt;- data_nhl |&gt;\n  filter(\n    points &lt; 200,\n    penalty_minutes &lt; 400,\n    games_played &gt; 50\n  )\n\n\nPython Code\n\n\ndata_nhl = data_nhl[\n    (data_nhl[\"points\"] &lt; 200) &\n    (data_nhl[\"penalty_minutes\"] &lt; 400) &\n    (data_nhl[\"games_played\"] &gt; 50)\n]"
   },
   {
     "objectID": "slides.html#categorical-variables",
@@ -123,7 +123,7 @@
     "href": "slides.html#r-python-code-1",
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "R & Python Code",
-    "text": "R & Python Code\n\n\nR Code\n\ndata_nhl &lt;- data_nhl |&gt;\n  distinct(season, \n           team, \n           first_name, \n           last_name, \n           .keep_all = TRUE) |&gt;\n  mutate(\n    can_or_usa = fct_lump(birth_country, n = 2)\n  ) \n\n\n\n\nPython Code"
+    "text": "R & Python Code\nR Code\n\n\nlibrary(tidymodels)\n\nrec_all &lt;- recipe(points ~ height + weight + age + can_or_usa + \n                  birth_month + position_code + season + team + \n                  penalty_minutes, data = data_nhl)\n\nrec_best &lt;- recipe(points ~ position_type + season + team, \n                   data = data_nhl)\n\n\nPython Code\n\n\nvars_all = [\"height\", \"weight\", \"age\", \"can_or_usa\", \"birth_month\", \n            \"position_code\", \"season\", \"team\", \"penalty_minutes\"]\n\nvars_best = [\"position_type\", \"season\", \"team\"]"
   },
   {
     "objectID": "slides.html#check-in",
@@ -172,7 +172,7 @@
     "href": "slides.html#r-python-code-2",
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "R & Python Code",
-    "text": "R & Python Code\nR Code\n\n\nlibrary(tidymodels)\n\nrec_all &lt;- recipe(points ~ height + weight + age + can_or_usa + \n                  birth_month + position_code + season + team + \n                  penalty_minutes, data = data_nhl)\n\nrec_best &lt;- recipe(points ~ position_type + season + team, \n                   data = data_nhl)\n\n\nPython Code\n\n\nvars_all = [\"height\", \"weight\", \"age\", \"can_or_usa\", \"birth_month\", \n            \"position_code\", \"season\", \"team\", \"penalty_minutes\"]\n\nvars_best = [\"position_type\", \"season\", \"team\"]"
+    "text": "R & Python Code\nR Code\n\n\nlr_spec &lt;- linear_reg() |&gt;\n  set_mode(\"regression\")\n\ndt_spec &lt;- decision_tree(min_n = 10) |&gt;\n  set_mode(\"regression\") \n\n\nPython Code\n\n\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.tree import DecisionTreeRegressor\n\nlr_spec = LinearRegression()\n\ndt_spec = DecisionTreeRegressor(min_samples_leaf = 10)"
   },
   {
     "objectID": "slides.html#specifying-candidate-models",
@@ -186,7 +186,7 @@
     "href": "slides.html#r-python-code-3",
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "R & Python Code",
-    "text": "R & Python Code\nR Code\n\n\nlr_spec &lt;- linear_reg() |&gt;\n  set_mode(\"regression\")\n\ndt_spec &lt;- decision_tree(min_n = 10) |&gt;\n  set_mode(\"regression\") \n\n\nPython Code\n\n\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.tree import DecisionTreeRegressor\n\nlr_spec = LinearRegression()\n\ndt_spec = DecisionTreeRegressor(min_samples_leaf = 10)"
+    "text": "R & Python Code\n\n\n\nR Code\nSpecify transformer and variable(s) at the same time\n\n\n\nPython Code\nSpecify “general” transformer, then apply the transformer to specific columns.\n\nHudconfansdr GIFfrom Hudconfansdr GIFs"
   },
   {
     "objectID": "slides.html#pre-processing-options",
@@ -200,14 +200,14 @@
     "href": "slides.html#r-python-code-4",
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "R & Python Code",
-    "text": "R & Python Code\n\n\n\nR Code\nSpecify transformer and variable(s) at the same time\n\n\n\nPython Code\nSpecify “general” transformer, then apply the transformer to specific columns.\n\nHudconfansdr GIFfrom Hudconfansdr GIFs"
+    "text": "R & Python Code\nR Code (Template)\n\n\nworkflow() |&gt;\n  add_model() |&gt;\n  add_recipe()\n\n\n\nPython Code (Template)\n\n\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.base import clone\n\nmake_pipeline(clone(recipe), clone(model))"
   },
   {
     "objectID": "slides.html#r-python-code-5",
     "href": "slides.html#r-python-code-5",
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "R & Python Code",
-    "text": "R & Python Code\nR Code (Template)\n\n\nworkflow() |&gt;\n  add_model() |&gt;\n  add_recipe()\n\n\n\nPython Code (Template)\n\n\nfrom sklearn.pipeline import make_pipeline\n\nmake_pipeline(recipe, model)"
+    "text": "R & Python Code\n\nR Code (Template)\n\n# Generate predictions\npred_lr_all &lt;- predict(wflow_lr_all_fit, new_data = data_nhl_test) |&gt; \n  bind_cols(data_nhl_test)\n\n# Compute RMSE metric\nrmse(pred_lr_all, truth = points, estimate = .pred)\n\n\nPython Code (Template)\n\nfrom sklearn.metrics import mean_squared_error\n\n# Split data into predictors\nX_test = data_nhl_test.drop(columns = [\"points\"])\n# and target\ny_test = data_nhl_test[\"points\"]\n\n# Make predictions\npred_lr_all = wflow_lr_all_fit.predict(X_test)\n\n# Calculate prediction errors\nrmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))"
   },
   {
     "objectID": "slides.html#step-5-interpreting-model-conclusions",
@@ -250,5 +250,117 @@
     "title": "Introduction to Predictive Modeling with Pipelines",
     "section": "",
     "text": "Heated Rivalry Ilya Rozanov GIFfrom Heated Rivalry GIFs"
+  },
+  {
+    "objectID": "slides.html#comparing-models",
+    "href": "slides.html#comparing-models",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Comparing Models",
+    "text": "Comparing Models\n\nNow, how will we compare the four options and see which one is most successful at predicting points?\n\n\n\nThe process goes like this:\n\nRandomly set aside 20% of our data rows as a test set. The rest is called the training set.\nFit all of the workflows on the training set.\nSee how well each fitted workflow does at predicting on the test set.\n\n\n\n\n\n\n\n\n\n\n\nWarning\n\n\nIn Part 2 of the workshop, you will learn about using cross-validation to choose between different models. This is essentially the process of creating many different test/training splits."
+  },
+  {
+    "objectID": "slides.html#test-train-split",
+    "href": "slides.html#test-train-split",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Test / Train Split",
+    "text": "Test / Train Split\nR Code\n\n\nset.seed(2244)\n\nsplit &lt;- initial_split(data_nhl, prop = 0.8)\n\ndata_nhl_train &lt;- training(split)\ndata_nhl_test &lt;- testing(split)\n\n\nPython Code\n\n\nfrom sklearn.model_selection import train_test_split\n\n\ndata_nhl_train, data_nhl_test = train_test_split(data_nhl, \n                                                 test_size = 0.2, \n                                                 random_state = 2244)"
+  },
+  {
+    "objectID": "slides.html#fit-our-models-on-the-training-data",
+    "href": "slides.html#fit-our-models-on-the-training-data",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Fit Our Models on the Training Data",
+    "text": "Fit Our Models on the Training Data\nR Code (Template)\n\n\n# Fit workflow on training data\nwflow_lr_all_fit &lt;- fit(wflow_lr_all, data = data_nhl_train)\n\n\n\nPython Code (Template)\n\n\n# Split data into predictors\nX_train = data_nhl_train.drop(columns = [\"points\"])\n# and target\ny_train = data_nhl_train[\"points\"]\n\n# Fit workflow on training data\nwflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)"
+  },
+  {
+    "objectID": "slides.html#assess-models-on-test-data",
+    "href": "slides.html#assess-models-on-test-data",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Assess Models on Test Data",
+    "text": "Assess Models on Test Data\nFinally, we will use these fitted models to make predictions on the test data, and we’ll see how close these predictions were to the true observed values for points\n\n\n\n\n\n\n\nNote\n\n\nIn this analysis, we are using root mean squared error as our metric for the test data. That is, we take the squared difference between the predicted number of points a player will get and the actual number of points they get, then we add those numbers up and take the average.\n\\[ \\sqrt \\frac{\\sum_{i=1}^n (y_i - \\hat{y}_i)^2}{n}\\]"
+  },
+  {
+    "objectID": "slides.html#r-python-code-6",
+    "href": "slides.html#r-python-code-6",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "R & Python Code",
+    "text": "R & Python Code\n\nR Code (Template)\n\n# Generate predictions\npred_lr_all &lt;- predict(wflow_lr_all_fit, new_data = data_nhl_test) |&gt; \n  bind_cols(data_nhl_test)\n\n# Compute RMSE metric\nrmse(pred_lr_all, truth = points, estimate = .pred)\n\n\nPython Code (Template)\n\nfrom sklearn.metrics import mean_squared_error\n\n# Split data into predictors\nX_test = data_nhl_test.drop(columns = [\"points\"])\n# and target\ny_test = data_nhl_test[\"points\"]\n\n# Make predictions\npred_lr_all = wflow_lr_all_fit.predict(X_test)\n\n# Calculate prediction errors\nrmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))"
+  },
+  {
+    "objectID": "slides.html#r-python-code-7",
+    "href": "slides.html#r-python-code-7",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "R & Python Code",
+    "text": "R & Python Code\nR Code (Template)\n\n# Generate predictions\npred_lr_all &lt;- predict(wflow_lr_all_fit, data_nhl_test) |&gt; \n  bind_cols(data_nhl_test)\n\n# Compute RMSE metric\nrmse(pred_lr_all, truth = points, estimate = .pred)\n\nPython Code (Template)\n\nfrom sklearn.metrics import mean_squared_error\n\n# Separate features and outcome from test set\nX_test = data_nhl_test.drop(columns = [\"points\"])\ny_test = data_nhl_test[\"points\"]\n\n# Make predictions\npred_lr_all = wflow_lr_all_fit.predict(X_test)\n\n# Calculate prediction errors\nrmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))"
+  },
+  {
+    "objectID": "slides.html#what-did-you-get",
+    "href": "slides.html#what-did-you-get",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "What did you get???",
+    "text": "What did you get???\n\nOf our four candidate workflows, which model is the “best” model?\nBy how much? How close is the next best model?"
+  },
+  {
+    "objectID": "slides.html#fit-your-final-model",
+    "href": "slides.html#fit-your-final-model",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Fit your final model",
+    "text": "Fit your final model\nWe used out test/training split to assess our candidates. However, once we’ve chosen a winner, we want to make sure we use all our data for our final conclusions!\n\n\nSo, we have one last model fitting task:\nR Code\n\n\nfinal_model &lt;- _______ |&gt;\n  fit(data_nhl)\n\n\nPython Code\n\n\nfinal_model = _______.fit(data_nhl)"
+  },
+  {
+    "objectID": "slides.html#interpret-your-final-model",
+    "href": "slides.html#interpret-your-final-model",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Interpret your final model",
+    "text": "Interpret your final model\nSometimes, the goal of your machine learning process was simply to produce this model - perhaps you will then use it on next year’s NHL data to guess which players will score the most!\nOther times, the goal is more about interpretation: you want to tell stories about the patterns in the data.\nSince our best final model was a decision tree, we’ll make a visual of the results:"
+  },
+  {
+    "objectID": "slides.html#data-ethics-categorical-variables",
+    "href": "slides.html#data-ethics-categorical-variables",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Data Ethics & Categorical Variables",
+    "text": "Data Ethics & Categorical Variables\n\n\nCreating an “Other” category might feel fairly benign, but this isn’t always the case.\n\nLet’s consider a different variable—gender.\n\n\n\n\n\n\nSuppose we lump all the PALiISaDS students not identifying as a woman or a man into a category named “Other”.\n\nWhat message does that send to students who are non-binary or trans?\n\n\n\n\n\n\n\nWhat if we created two levels for racial groups—“White” and “Non-White”.\n\nWhat message does that send to students of color?"
+  },
+  {
+    "objectID": "slides.html#interpreting-your-final-model",
+    "href": "slides.html#interpreting-your-final-model",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Interpreting your Final Model",
+    "text": "Interpreting your Final Model\n\nSometimes, the goal of your machine learning process is simply to produce a model.\n\nYou can use the model to predict which players you should draft!\n\n\n\n\nOther times, the goal is more about interpretation.\n\nYou want to tell stories about the patterns in the data.\n\n\n\n\nSince our best final model was a decision tree, we’ll make a dendrogram visualizing the splits."
+  },
+  {
+    "objectID": "slides.html#visualizing-our-final-model",
+    "href": "slides.html#visualizing-our-final-model",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Visualizing Our Final Model",
+    "text": "Visualizing Our Final Model\nSince our best final model was a decision tree, we’ll make a dendrogram visualizing the splits."
+  },
+  {
+    "objectID": "slides.html#in-python",
+    "href": "slides.html#in-python",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "In Python",
+    "text": "In Python\n\nfrom sklearn.tree import plot_tree\nimport matplotlib.pyplot as plt\n\nplt.figure(figsize = (16, 8))\nplot_tree(\n    final_model.named_steps[\"dt_spec\"],\n    feature_names = X_train.columns,\n    filled = True,\n    rounded = True,\n    max_depth = 3  # optional: limit depth for clarity\n)\nplt.show()"
+  },
+  {
+    "objectID": "slides.html#in-r",
+    "href": "slides.html#in-r",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "In R",
+    "text": "In R\n\nlibrary(rpart.plot)\n\n# Pull out the parsnip model object\ntree_fit &lt;- extract_fit_parsnip(final_model)\n\nrpart.plot(tree_fit$fit, roundint = FALSE)"
+  },
+  {
+    "objectID": "slides.html#r-code",
+    "href": "slides.html#r-code",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "R Code",
+    "text": "R Code\n\ndata_nhl &lt;- data_nhl |&gt;\n  distinct(season, \n           team, \n           first_name, \n           last_name, \n           .keep_all = TRUE) |&gt;\n  mutate(\n    can_or_usa = fct_lump(birth_country, n = 2)\n  )"
+  },
+  {
+    "objectID": "slides.html#python-code",
+    "href": "slides.html#python-code",
+    "title": "Introduction to Predictive Modeling with Pipelines",
+    "section": "Python Code",
+    "text": "Python Code"
   }
 ]

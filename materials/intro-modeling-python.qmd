@@ -30,7 +30,7 @@ provided to load the data.
 
 import pandas as pd
 
-data_nhl = pd.read_csv("https://www.dropbox.com/scl/fi/rrbll4jm20fvol58nk8wf/nhl_player_stats.csv?rlkey=pbg8avxv02w8gras3mmimmifh&st=llz0bxpa&dl=0")
+data_nhl = pd.read_csv("https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1")
 ```
 
 ## Inspecting the Data
@@ -304,7 +304,7 @@ We'll try two recipes today:
 vars_all = ["height", "weight", "age", "can_or_usa", "birth_month", 
             "position_code", "season", "team", "penalty_minutes"]
 
-vars_best = ["position_type", "season", "team"]
+vars_best = []
 ```
 
 ## Specifying Candidate Models
@@ -356,7 +356,7 @@ log_transformer = Pipeline([
 
 interact_transformer = Pipleline([
   ("onehot", OneHotEncoder(drop = "first")),
-   ("interact", PolynomialFeatures(interaction_only = True, include_bias = True))
+  ("interact", PolynomialFeatures(interaction_only = True, include_bias = True))
 ])
 ```
 
@@ -366,7 +366,7 @@ interact_transformer = Pipleline([
 rec_all = ColumnTransformer([
     ("cat", categorical_transformer, ["position_code", "season", "team"]),
     ("int", interact_transformer, ["can_or_usa", "birth_month"]),
-    ("log", log_transformer, ["penalty_minutes"])
+    ("log", log_transformer, ["penalty_minutes"]),
     ("num", "passthrough", ["age", "height", "weight"])
 ])
 
@@ -387,20 +387,179 @@ Each of these candidate options is called a **workflow** or a **pipeline**.
 #| label: specify-model-and-transformers
 
 from sklearn.pipeline import make_pipeline
+from sklearn.base import clone
 
 # Linear regression with all predictors
-wflow_lr_all = make_pipeline(rec_all, lr_spec)
+wflow_lr_all = make_pipeline(clone(rec_all), clone(lr_spec))
 
 # Linear regression with best predictors
-wflow_lr_best = make_pipeline(rec_best, lr_spec)
+wflow_lr_best = make_pipeline(clone(rec_best), clone(lr_spec))
 
 # Decision tree with all predictors
-wflow_dt_all = make_pipeline(rec_all, dt_spec)
+wflow_dt_all = make_pipeline(clone(rec_all), clone(dt_spec))
 
 # Decision tree with best predictors
-wflow_dt_best = make_pipeline(rec_best, dt_spec)
+wflow_dt_best = make_pipeline(clone(rec_best), clone(dt_spec))
 
 ```
 
-
 # Step 4 -- Choosing between Competing Models
+
+Whew! All this work, and we haven't even fit a model yet!  
+
+Everything we have done to this point was *setup*: establishing our plans for a
+few different workflows to try.
+
+Now, how will we compare the four options and see which one is most successful
+at predicting `points`?  
+
+The process goes like this:
+
+1. Randomly set aside 20% of our data rows as a *test set*.  The rest is
+called the *training set*.
+
+2. Fit all of the workflows on the *training set*.
+
+3. See how well each fitted workflow does at predicting on the *test set*.
+
+## Test / Train Split
+
+```{python}
+#| label: test-train-split
+
+from sklearn.model_selection import train_test_split
+
+# Same random state (seed) as Python users get consistent results
+data_nhl_train, data_nhl_test = train_test_split(data_nhl, 
+                                                 test_size = __, 
+                                                 random_state = ____)
+```
+
+### Fit Our Models on the Training Data
+
+```{python}
+#| label: fit-models-to-training-data
+
+# Declare predictor variables
+X_train = dat_nhl_train.drop(columns = ["points"])
+# Declare target variable
+y_train = dat_nhl_train["points"]
+
+# Fit the workflows
+wflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)
+wflow_lr_best_fit = wflow_lr_best.fit(X_train, y_train)
+wflow_dt_all_fit = wflow_dt_all.fit(X_train, y_train)
+wflow_dt_best_fit = wflow_dt_best.fit(X_train, y_train)
+```
+
+## Assess Models on Test Data
+
+Finally, we will use these fitted models to make predictions on the test data, 
+and we'll see how close these predictions were to the true observed values for
+`points`
+
+In this analysis, we are using *root mean squared error* as our **metric** for
+the test data.  That is, we take the squared difference between the *predicted* 
+number of points a player will get and the *actual* number of points they get, 
+then we add those numbers up and take the average. 
+
+$$ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}$$
+
+```{python}
+#| label: predictions-for-test-data
+#| code-line-numbers: false
+
+from sklearn.metrics import mean_squared_error
+
+# Declare predictor variables
+X_test = data_nhl_test.drop(columns = ["points"])
+# Declare target variable
+y_test = data_nhl_test["points"]
+
+# Make predictions
+pred_lr_all = wflow_lr_all_fit.predict(X_test)
+pred_lr_best = wflow_lr_best_fit.predict(X_test)
+pred_dt_all = wflow_dt_all_fit.predict(X_test)
+pred_dt_best = wflow_dt_best_fit.predict(X_test)
+
+# Calculate prediction errors
+rmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))
+rmse_lr_best = np.sqrt(mean_squared_error(y_test, pred_lr_best))
+rmse_dt_all = np.sqrt(mean_squared_error(y_test, pred_dt_all))
+rmse_dt_best = np.sqrt(mean_squared_error(y_test, pred_dt_best))
+
+print("RMSE (Linear All):", rmse_lr_all)
+print("RMSE (Linear Best):", rmse_lr_best)
+print("RMSE (Tree All):", rmse_dt_all)
+print("RMSE (Tree Best):", rmse_dt_best)
+
+```
+
+## What did you get???
+
+Of our four candidate workflows, which model is the "best" model? 
+
+By how much? How close is the next best model?
+
+## Fit your final model
+
+We used out test/training split to **assess our candidates**.  However, once
+we've chosen a winner, we want to make sure we use *all our data* for our
+final conclusions!
+
+So, we have one last model fitting task:
+
+```{python}
+#| label: fit-final-model-python
+
+# Fit your chosen pipeline to the full data!
+
+final_model = _______.fit(data_nhl)
+```
+
+# Step 5 -- Interpreting Model Conclusions
+
+- Sometimes, the goal of your machine learning process is simply to **produce a 
+model**. 
+    * You can use the model to predict which players you should draft!
+
+- Other times, the goal is more about **interpretation**. 
+    * You want to tell stories about the patterns in the data.
+
+Since our best final model was a *decision tree*, we'll make a 
+**dendrogram** visualizing the splits. 
+
+```{python}
+#| label: dendrogram-of-decision-tree-model
+#| eval: false
+
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(16, 8))
+plot_tree(
+    final_model.named_steps["dt_spec"],
+    feature_names=X_train.columns,
+    filled=True,
+    rounded=True,
+    max_depth=3  # optional: limit depth for clarity
+)
+plt.show()
+```
+
+# Step 6 -- Ethical Considerations
+
+<div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="50%"><a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+<!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
+<!-- social and historical context to work responsibly with data. -->
+
+
+<!-- analogy with "other" category for race, gender -->
+<!-- analogy with student success (what features are associated with higher GPAs,  -->
+<!-- college degrees) -->
+
+## 
+
+<div class="tenor-gif-embed" data-postid="15949382497529003446" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446">Heated Rivalry Ilya Rozanov GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
