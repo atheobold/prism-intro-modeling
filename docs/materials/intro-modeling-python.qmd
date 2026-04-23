@@ -1,6 +1,6 @@
 ---
 title: "Introduction to Predictive Modeling with Pipelines"
-format: html
+jupyter: python3
 ---
 
 # Data Context 
@@ -23,12 +23,14 @@ This information was acquired through the [NHL API](https://github.com/Zmalski/N
 I've saved the `.csv` to Dropbox, so we can read it in using a URL. Run the code
 provided to load the data.
 
-```{r}
-#| label: load-data-R
+```{python}
+#| label: load-data-Python
+#| echo: true
+#| code-line-numbers: false
 
-library(tidyverse)
+import pandas as pd
 
-data_nhl <- read_csv("https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1")
+data_nhl = pd.read_csv("https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1")
 ```
 
 ## Inspecting the Data
@@ -41,6 +43,8 @@ Take a few minutes to look over the data.
     * Are there any variables whose meaning is not obvious?
 
 - What are the data types of the variables (e.g., number, character, date)
+
+## Observations & Variables 
 
 ## Observations & Variables 
 
@@ -85,6 +89,10 @@ they are *not relevant* to the question.
 
 ### Investigating with Visuals
 
+```{python}
+from plotnine import *
+```
+
 Use the template code provided to create visuals of each numeric variable in the
 `data_nhl` dataset: 
 
@@ -101,13 +109,15 @@ Use the template code provided to create visuals of each numeric variable in the
 
 Do you find anything notable?
 
-```{r}
-#| label: ggplot-template-numerical
+```{python}
+#| label: plotnine-template
 
-ggplot(data = data_nhl, 
-       mapping = aes(x = points)
+(
+  ggplot(data = data_nhl, 
+       mapping = aes(x = "points")
        ) +
   geom_histogram()
+)
 ```
 
 ### Cleaning the Data
@@ -118,16 +128,15 @@ on Dr. T's slides):
 
 *Replace the `___` with the relational statement you want (e.g., `> 50`)!*
 
-```{r}
+```{python}
 #| label: data-cleaning-numerical
 
-data_nhl <- data_nhl |>
-  filter(
-    games_played ___,
-    points ___,
-    age ___,
-    penalty_minutes ___
-  )
+dat_nhl_clean = dat_nhl[
+    (dat_nhl["games_played"] ___) &
+    (dat_nhl["points"] ___) &
+    (dat_nhl["age"] ___) &
+    (dat_nhl["penalty_minutes"] ___)
+]
 ```
 
 ## Categorical variables
@@ -143,8 +152,7 @@ analysis.
 one or the other.
 - Anything that suggests **issues with the data** to fix.
 
-
-## Investigating with Visuals
+### Investigating with Visuals
 
 Use the template code provided to create visuals of each numeric variable in the
 `data_nhl` dataset: 
@@ -159,35 +167,39 @@ Use the template code provided to create visuals of each numeric variable in the
 
 Do you find anything notable?
 
-```{r}
-#| label: ggplot-template-categorical
-
-ggplot(data_nhl, 
-       mapping = aes(x = position_code)) +
+```{python}
+(
+  ggplot(data_nhl, 
+       mapping = aes(x = "position_code")) +
   geom_bar()
+  )
 ```
 
-## Addressing Unusual Observations
+### Cleaning the Data
 
-These visualizations should reveal two issues:
+Based on your investigation, you will likely want to filter the data to 
+exclude certain observations. Fill in the code below to filter the data (based
+on Dr. T's slides):
 
-1. For some reason, the entries for the `2009` season are listed twice.  We will
-simply delete the duplicates.
-
-2. The `birth_city`, `birth_state_province`, and `birth_country` variables have
-far too many different values to reasonable use.  
-
-    - We will use the `country` variable only, and we will limit its values to 
-    `"Canada"`, `"United States"`, or `"Other"`.
-
-```{r}
+```{python}
 #| label: data-cleaning-categorical
 
-data_nhl <- data_nhl |>
-  distinct() |>
-  mutate(
-    can_or_usa = fct_lump()
-  ) 
+dat_nhl = dat_nhl.drop_duplicates(
+  subset = []
+  )
+
+top_countries = (
+  dat_nhl[]
+  .value_counts()
+  .nlargest()
+  .index
+  )
+
+dat_nhl["can_or_usa"] = (
+  dat_nhl[]
+  .where(dat_nhl[].isin(top_countries), 
+         "Other")
+  )
 ```
 
 ### Check in
@@ -203,7 +215,7 @@ Variables to Check:
 - `season` 
 - `can_or_usa`
 
-```{r}
+```{python}
 #| label: cleaning-check
 
 ```
@@ -226,17 +238,19 @@ Use the code provided to visualize the relationship between `points` and a few
 of these potential predictors. Decide which variable(s) seem to have the 
 strongest relationship with our target variable (`points`). 
 
-```{r}
+```{python}
 #| label: ggplot-template-two-numerical
 
-ggplot(data = data_nhl, 
-       mapping = aes(x = age, y = points)
+(
+  ggplot(data = data_nhl, 
+       mapping = aes(x = "age", y = "points")
        ) +
   geom_point() +
   geom_smooth()
+)
 ```
 
-## Categorical variables
+## Categorical Variables
 
 Consider the *categorical* variables in this dataset.  Which ones might be
 reasonable to use in our model?
@@ -245,15 +259,22 @@ Use the code provided to visualize the relationship between `points` and a few
 of these potential predictors. Decide which variable(s) seem to have the 
 strongest relationship with our target variable (`points`). 
 
-```{r}
-#| label: ggplot-template-numerical-categorical
+```{bash}
+# Note you will need to install the ridgenine package for this plot to work!
+pip install ridgenine
+```
 
-library(ggridges)
+```{python}
+#| label: ggplot-template-one-cat-one-num
 
-ggplot(data = data_nhl, 
-       mapping = aes(x = points, y = position_type)
-       ) +
-  geom_density_ridges()
+from ridgenine import geom_density_ridges
+
+(
+  ggplot(data = data_nhl, 
+         mapping = aes(x = "points", y = "position_type")
+         ) +
+  geom_density_ridges() 
+)
 ```
 
 ## Multiple Variables
@@ -266,21 +287,23 @@ become professional athletes, because they are on the older end of the league
 for their age growing up.  
 
 It may be that this trend only applies in some countries, since not all
-countries have the same youth sports system. Let's see!
+countries have the same youth sports system.
 
-```{r}
+Let's see!
+
+```{python}
 #| label: points-by-birth-faceted-by-country
 
-data_nhl |>
-  mutate(birth_month_cat = as.factor(birth_month)) |> 
-  ggplot(
-    mapping = aes(x = points, y = can_or_usa)
+(
+  ggplot(data = data_nhl, 
+         mapping = aes(x = "points", y = "can_or_usa")
          ) +
   geom_density_ridges() +
-  facet_wrap(~birth_month_cat)
+  facet_wrap("birth_month") 
+)
 ```
 
-## Make predictor recipes
+### Make Predictor Recipes
 
 Now, we are ready to prepare our **recipes**: the different combinations of
 predictors that we think could produce a good model.
@@ -291,16 +314,11 @@ We'll try two recipes today:
 
 * One with only the three "best" predictors that you choose.
 
-```{r}
-#| label: make-recipes-for-variables
+```{python}
+vars_all = ["height", "weight", "age", "can_or_usa", "birth_month", 
+            "position_code", "season", "team", "penalty_minutes"]
 
-library(tidymodels)
-
-rec_all <- recipe(points ~ height + weight + age + can_or_usa + 
-                    birth_month + position_code + season + team + 
-                    penalty_minutes, data = data_nhl)
-
-rec_best <- recipe(points ~ _____, data = data_nhl)
+vars_best = []
 ```
 
 ## Specifying Candidate Models
@@ -315,14 +333,13 @@ outcome and the interpretations are quite simple.
 - A decision tree is a simple choice for a non-statistical model that also has
 easy interpretations. 
 
-```{r}
-#| label: specify-models
+```{python}
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 
-lr_spec <- linear_reg() |>
-  set_mode("regression")
+lr_spec = LinearRegression()
 
-dt_spec <- decision_tree(____) |>
-  set_mode("regression") 
+dt_spec = DecisionTreeRegressor(____)
 ```
 
 ## Pre-Processing Options
@@ -336,16 +353,42 @@ analysis:
 
 We will add a *tranformation* and an *interaction* to our workflow.
 
-```{r}
-#| label: create-recipes-for-variable-transformation
+```{python}
+#| label: make-general-transformers
 
-rec_all <- rec_all |>
-  step_log(penalty_minutes, offset = 1) |>
-  step_dummy(can_or_usa, position_code, team) |>
-  step_interact(terms = ~ birth_month:starts_with("can_or_usa"))
+import numpy as np
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer, PolynomialFeatures
 
-rec_best <- rec_best |>
-  step_dummy(position_type, team)
+categorical_transformer = Pipeline([
+    ("onehot", OneHotEncoder(drop="first", handle_unknown="ignore"))
+])
+
+log_transformer = Pipeline([
+    ("log", FunctionTransformer(np.log1p, validate = True))
+])
+
+interact_transformer = Pipeline([
+  ("onehot", OneHotEncoder(drop = "first")),
+  ("interact", PolynomialFeatures(interaction_only = True, include_bias = True))
+])
+```
+
+```{python}
+#| label: use-transformers-on-specific-columns
+
+rec_all = ColumnTransformer([
+    ("cat", categorical_transformer, ["position_code", "season", "team"]),
+    ("int", interact_transformer, ["can_or_usa", "birth_month"]),
+    ("log", log_transformer, ["penalty_minutes"]),
+    ("num", "passthrough", ["age", "height", "weight"])
+])
+
+rec_best = ColumnTransformer([
+    ("cat", categorical_transformer, ["position_type", "season", "team"])
+])
+
 ```
 
 ### Combining Data & Models
@@ -355,28 +398,23 @@ different **recipe and preprocessing** choices.
 
 Each of these candidate options is called a **workflow** or a **pipeline**.
 
-```{r}
+```{python}
 #| label: specify-model-and-transformers
 
+from sklearn.pipeline import make_pipeline
+from sklearn.base import clone
+
 # Linear regression with all predictors
-wflow_lr_all <- workflow() |>
-  add_model(lr_spec) |>
-  add_recipe(rec_all)
+wflow_lr_all = make_pipeline(clone(rec_all), clone(lr_spec))
 
 # Linear regression with best predictors
-wflow_lr_best <- workflow() |>
-  add_model(lr_spec) |>
-  add_recipe(rec_best)
+wflow_lr_best = make_pipeline(clone(rec_best), clone(lr_spec))
 
 # Decision tree with all predictors
-wflow_dt_all <- workflow() |>
-  add_model(dt_spec) |>
-  add_recipe(rec_all)
+wflow_dt_all = make_pipeline(clone(rec_all), clone(dt_spec))
 
 # Decision tree with best predictors
-wflow_dt_best <- workflow() |>
-  add_model(dt_spec) |>
-  add_recipe(rec_best)
+wflow_dt_best = make_pipeline(clone(rec_best), clone(dt_spec))
 
 ```
 
@@ -401,35 +439,32 @@ called the *training set*.
 
 ## Test / Train Split
 
-```{r}
+```{python}
 #| label: test-train-split
 
-# Same seed as Python users get consistent results
-set.seed(____)
+from sklearn.model_selection import train_test_split
 
-split <- initial_split(data_nhl, prop = __)
-
-data_nhl_train <- training(split)
-data_nhl_test <- testing(split)
-
+# Same random state (seed) as Python users get consistent results
+data_nhl_train, data_nhl_test = train_test_split(data_nhl, 
+                                                 test_size = __, 
+                                                 random_state = ____)
 ```
 
-## Fit Our Models on the Training Data
+### Fit Our Models on the Training Data
 
-```{r}
+```{python}
 #| label: fit-models-to-training-data
 
-wflow_lr_all_fit <- fit(wflow_lr_all, 
-                        data = data_nhl_train)
+# Declare predictor variables
+X_train = data_nhl_train.drop(columns = ["points"])
+# Declare target variable
+y_train = data_nhl_train["points"]
 
-wflow_lr_best_fit <- fit(wflow_lr_best, 
-                         data = data_nhl_train)
-
-wflow_dt_all_fit <- fit(wflow_dt_all, 
-                        data = data_nhl_train)
-
-wflow_dt_best_fit <- fit(wflow_dt_best, 
-                         data = data_nhl_train)
+# Fit the workflows
+wflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)
+wflow_lr_best_fit = wflow_lr_best.fit(X_train, y_train)
+wflow_dt_all_fit = wflow_dt_all.fit(X_train, y_train)
+wflow_dt_best_fit = wflow_dt_best.fit(X_train, y_train)
 ```
 
 ## Assess Models on Test Data
@@ -445,42 +480,33 @@ then we add those numbers up and take the average.
 
 $$ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}$$
 
-```{r}
+```{python}
 #| label: predictions-for-test-data
+#| code-line-numbers: false
 
-# Generate predictions
-pred_lr_all <- predict(wflow_lr_all_fit, 
-                       new_data = data_nhl_test) |> 
-  bind_cols(data_nhl_test)
+from sklearn.metrics import mean_squared_error
 
-pred_lr_best <- predict(wflow_lr_best_fit, 
-                        new_data = data_nhl_test) |> 
-  bind_cols(data_nhl_test)
+# Declare predictor variables
+X_test = data_nhl_test.drop(columns = ["points"])
+# Declare target variable
+y_test = data_nhl_test["points"]
 
-pred_dt_all <- predict(wflow_dt_all_fit, 
-                       new_data = data_nhl_test) |> 
-  bind_cols(data_nhl_test)
+# Make predictions
+pred_lr_all = wflow_lr_all_fit.predict(X_test)
+pred_lr_best = wflow_lr_best_fit.predict(X_test)
+pred_dt_all = wflow_dt_all_fit.predict(X_test)
+pred_dt_best = wflow_dt_best_fit.predict(X_test)
 
-pred_dt_best <- predict(wflow_dt_best_fit, 
-                        new_data = data_nhl_test) |> 
-  bind_cols(data_nhl_test)
+# Calculate prediction errors
+rmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))
+rmse_lr_best = np.sqrt(mean_squared_error(y_test, pred_lr_best))
+rmse_dt_all = np.sqrt(mean_squared_error(y_test, pred_dt_all))
+rmse_dt_best = np.sqrt(mean_squared_error(y_test, pred_dt_best))
 
-# Compute RMSE metrics
-rmse(pred_lr_all, 
-     truth = points, 
-     estimate = .pred)
-
-rmse(pred_lr_best, 
-     truth = points, 
-     estimate = .pred)
-
-rmse(pred_dt_all, 
-     truth = points, 
-     estimate = .pred)
-
-rmse(pred_dt_best, 
-     truth = points, 
-     estimate = .pred)
+print("RMSE (Linear All):", rmse_lr_all)
+print("RMSE (Linear Best):", rmse_lr_best)
+print("RMSE (Tree All):", rmse_dt_all)
+print("RMSE (Tree Best):", rmse_dt_best)
 
 ```
 
@@ -501,9 +527,13 @@ So, we have one last model fitting task:
 ```{python}
 #| label: fit-final-model-python
 
-# Fit your chosen workflow to the full data!
+# Declare predictor variables
+X_full = data_nhl.drop(columns = ["points"])
+# Declare target variable
+y_full = data_nhl["points"]
 
-final_model = fit(____, data = data_nhl)
+# Fit your chosen pipeline to the full data!
+final_model = _______.fit(X_full, y_full)
 ```
 
 # Step 5 -- Interpreting Model Conclusions
@@ -518,15 +548,62 @@ model**.
 Since our best final model was a *decision tree*, we'll make a 
 **dendrogram** visualizing the splits. 
 
-```{r}
+```{bash}
+pip install dtreeviz
+```
+
+```{python}
+import dtreeviz
+
+viz = dtreeviz.model(
+    final_model.named_steps["decisiontreeregressor"],
+    X_train=final_model.named_steps["columntransformer"].transform(X_train),
+    y_train=y_train,
+    target_name="target",
+    feature_names=[f"feature_{i}" for i in range(n_features)]
+)
+viz.view()
+```
+
+```{python}
+from sklearn.tree import export_graphviz
+import graphviz
+
+dot_data = export_graphviz(
+    final_model.named_steps["decisiontreeregressor"],
+    max_depth=3,
+    filled=True,
+    rounded=True
+)
+graphviz.Source(dot_data).view()
+```
+
+```{python}
 #| label: dendrogram-of-decision-tree-model
+#| eval: false
 
-library(rpart.plot)
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
 
-# Pull out the parsnip model object
-tree_fit <- extract_fit_parsnip(final_model)
+n_features = final_model.named_steps["decisiontreeregressor"].n_features_in_
+feature_names = [f"feature_{i}" for i in range(n_features)]
 
-rpart.plot(tree_fit$fit)
+plt.figure(figsize=(16, 8))
+plot_tree(
+    final_model.named_steps["decisiontreeregressor"],
+    feature_names=feature_names,
+    filled=True,
+    rounded=True,
+    max_depth=3
+)
+
+plt.show()
+```
+
+The plot references the names of the features which we can track down here:
+
+```{python}
+final_model.named_steps["columntransformer"].transformers_
 ```
 
 ## Models that can do harm

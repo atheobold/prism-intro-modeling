@@ -2,6 +2,7 @@ project:
   type: website
   output-dir: docs
   render: 
+    - "*.qmd"
     - "!materials/intro-modeling-python.qmd"
     - "!materials/intro-modeling-R.qmd"
 
