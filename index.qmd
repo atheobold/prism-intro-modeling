@@ -36,9 +36,9 @@ have either of these installed, you can still work online!
 ::: {.column width="48%"}
 ### Local Files
 
-[Click here to download the R Quarto file]()
+[Click here to download the R Quarto file](materials/intro-modeling-R.qmd)
 
-[Click here to download the Python Quarto file]()
+[Click here to download the Python Quarto file](materials/intro-modeling-python.qmd)
 :::
 
 ::: {.column width="4%"}
@@ -47,9 +47,9 @@ have either of these installed, you can still work online!
 ::: {.column width="48%"}
 ### Remote Google Colab Files
 
-[Click here for Python notebook](https://colab.research.google.com/drive/1_jhbbuiEZjojGp_YoHewS5wyPxswPQ8o?usp=sharing)
+[Click here for Python notebook]()
 
-[Click here for R notebook](https://colab.research.google.com/drive/1Eav6WFhaqOlsfg2-hOvxrKBemHg3PgYJ?usp=sharing)
+[Click here for R notebook]()
 :::
 :::
 

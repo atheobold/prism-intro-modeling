@@ -193,7 +193,16 @@ data_nhl <- data_nhl |>
 
 ### Check in
 
-Make sure your re-visualize your variables after making the cleaning changes, to ensure that this accomplished what you hoped!
+Make sure your re-visualize your variables after making the cleaning changes, to
+ensure that this accomplished what you hoped!
+
+Variables to Check:
+
+- `points`
+- `penalty_minutes`
+- `games_played`
+- `season` 
+- `can_or_usa`
 
 ```{r}
 #| label: cleaning-check
@@ -266,10 +275,10 @@ countries have the same youth sports system. Let's see!
 data_nhl |>
   mutate(birth_month_cat = as.factor(birth_month)) |> 
   ggplot(
-    mapping = aes(x = points, y = birth_month_cat)
+    mapping = aes(x = points, y = can_or_usa)
          ) +
   geom_density_ridges() +
-  facet_wrap(~can_or_usa)
+  facet_wrap(~birth_month_cat)
 ```
 
 ## Make predictor recipes
@@ -313,7 +322,7 @@ easy interpretations.
 lr_spec <- linear_reg() |>
   set_mode("regression")
 
-dt_spec <- decision_tree(min_n = 10) |>
+dt_spec <- decision_tree(____) |>
   set_mode("regression") 
 ```
 
@@ -410,13 +419,17 @@ data_nhl_test <- testing(split)
 ```{r}
 #| label: fit-models-to-training-data
 
-wflow_lr_all_fit <- fit(wflow_lr_all, data = data_nhl_train)
+wflow_lr_all_fit <- fit(wflow_lr_all, 
+                        data = data_nhl_train)
 
-wflow_lr_best_fit <- fit(wflow_lr_best, data = data_nhl_train)
+wflow_lr_best_fit <- fit(wflow_lr_best, 
+                         data = data_nhl_train)
 
-wflow_dt_all_fit <- fit(wflow_dt_all, data = data_nhl_train)
+wflow_dt_all_fit <- fit(wflow_dt_all, 
+                        data = data_nhl_train)
 
-wflow_dt_best_fit <- fit(wflow_dt_best, data = data_nhl_train)
+wflow_dt_best_fit <- fit(wflow_dt_best, 
+                         data = data_nhl_train)
 ```
 
 ## Assess Models on Test Data
@@ -520,13 +533,18 @@ tree_fit <- extract_fit_parsnip(final_model)
 rpart.plot(tree_fit$fit)
 ```
 
-# Step 6 -- Ethical Considerations
+- Predictive models are great at **predicting**. 
+- Predictive models are not great in knowing if their model is **harmful**. 
 
-<!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
-<!-- social and historical context to work responsibly with data. -->
+Suppose instead we wanted to predict a student's likelihood of success in
+college. Our predictive model suggests that: 
 
+- `zip_code`, 
+- `parental_education`, 
+- `first_generation`
+- `standardized_exam_score` 
 
-<!-- analogy with "other" category for race, gender -->
-<!-- analogy with student success (what features are associated with higher GPAs,  -->
-<!-- college degrees) -->
+are strongly related to students' college performance. 
+
+**Who does this model privilege? Who is being harmed by this model?**
 

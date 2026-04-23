@@ -204,7 +204,16 @@ dat_nhl["can_or_usa"] = (
 
 ### Check in
 
-Make sure your re-visualize your variables after making the cleaning changes, to ensure that this accomplished what you hoped!
+Make sure your re-visualize your variables after making the cleaning changes, to
+ensure that this accomplished what you hoped!
+
+Variables to Check:
+
+- `points`
+- `penalty_minutes`
+- `games_played`
+- `season` 
+- `can_or_usa`
 
 ```{python}
 #| label: cleaning-check
@@ -250,16 +259,21 @@ Use the code provided to visualize the relationship between `points` and a few
 of these potential predictors. Decide which variable(s) seem to have the 
 strongest relationship with our target variable (`points`). 
 
-```{python}
-#| label: ggplot-template-two-numerical
+```{bash}
+# Note you will need to install the ridgenine package for this plot to work!
+pip install ridgenine
+```
 
-from plotnine.geoms import geom_density_ridges
+```{python}
+#| label: ggplot-template-one-cat-one-num
+
+from ridgenine import geom_density_ridges
 
 (
   ggplot(data = data_nhl, 
          mapping = aes(x = "points", y = "position_type")
          ) +
-  geom_density_ridges()
+  geom_density_ridges() 
 )
 ```
 
@@ -282,10 +296,10 @@ Let's see!
 
 (
   ggplot(data = data_nhl, 
-         mapping = aes(x = "points", y = "birth_month")
+         mapping = aes(x = "points", y = "can_or_usa")
          ) +
   geom_density_ridges() +
-  facet_wrap(~"can_or_usa") 
+  facet_wrap("birth_month") 
 )
 ```
 
@@ -325,7 +339,7 @@ from sklearn.tree import DecisionTreeRegressor
 
 lr_spec = LinearRegression()
 
-dt_spec = DecisionTreeRegressor(min_samples_leaf = 10)
+dt_spec = DecisionTreeRegressor(____)
 ```
 
 ## Pre-Processing Options
@@ -342,19 +356,20 @@ We will add a *tranformation* and an *interaction* to our workflow.
 ```{python}
 #| label: make-general-transformers
 
+import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer, PolynomialFeatures
 
 categorical_transformer = Pipeline([
-    ("onehot", OneHotEncoder(drop = "first", handle_unknown.= "ignore"))
+    ("onehot", OneHotEncoder(drop="first", handle_unknown="ignore"))
 ])
 
 log_transformer = Pipeline([
     ("log", FunctionTransformer(np.log1p, validate = True))
 ])
 
-interact_transformer = Pipleline([
+interact_transformer = Pipeline([
   ("onehot", OneHotEncoder(drop = "first")),
   ("interact", PolynomialFeatures(interaction_only = True, include_bias = True))
 ])
@@ -371,7 +386,7 @@ rec_all = ColumnTransformer([
 ])
 
 rec_best = ColumnTransformer([
-    ("cat", categorical_transformer, ["position_type", "season", "team])
+    ("cat", categorical_transformer, ["position_type", "season", "team"])
 ])
 
 ```
@@ -441,9 +456,9 @@ data_nhl_train, data_nhl_test = train_test_split(data_nhl,
 #| label: fit-models-to-training-data
 
 # Declare predictor variables
-X_train = dat_nhl_train.drop(columns = ["points"])
+X_train = data_nhl_train.drop(columns = ["points"])
 # Declare target variable
-y_train = dat_nhl_train["points"]
+y_train = data_nhl_train["points"]
 
 # Fit the workflows
 wflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)
@@ -512,9 +527,13 @@ So, we have one last model fitting task:
 ```{python}
 #| label: fit-final-model-python
 
-# Fit your chosen pipeline to the full data!
+# Declare predictor variables
+X_full = data_nhl.drop(columns = ["points"])
+# Declare target variable
+y_full = data_nhl["points"]
 
-final_model = _______.fit(data_nhl)
+# Fit your chosen pipeline to the full data!
+final_model = _______.fit(X_full, y_full)
 ```
 
 # Step 5 -- Interpreting Model Conclusions
@@ -529,6 +548,36 @@ model**.
 Since our best final model was a *decision tree*, we'll make a 
 **dendrogram** visualizing the splits. 
 
+```{bash}
+pip install dtreeviz
+```
+
+```{python}
+import dtreeviz
+
+viz = dtreeviz.model(
+    final_model.named_steps["decisiontreeregressor"],
+    X_train=final_model.named_steps["columntransformer"].transform(X_train),
+    y_train=y_train,
+    target_name="target",
+    feature_names=[f"feature_{i}" for i in range(n_features)]
+)
+viz.view()
+```
+
+```{python}
+from sklearn.tree import export_graphviz
+import graphviz
+
+dot_data = export_graphviz(
+    final_model.named_steps["decisiontreeregressor"],
+    max_depth=3,
+    filled=True,
+    rounded=True
+)
+graphviz.Source(dot_data).view()
+```
+
 ```{python}
 #| label: dendrogram-of-decision-tree-model
 #| eval: false
@@ -536,30 +585,41 @@ Since our best final model was a *decision tree*, we'll make a
 from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
 
+n_features = final_model.named_steps["decisiontreeregressor"].n_features_in_
+feature_names = [f"feature_{i}" for i in range(n_features)]
+
 plt.figure(figsize=(16, 8))
 plot_tree(
-    final_model.named_steps["dt_spec"],
-    feature_names=X_train.columns,
+    final_model.named_steps["decisiontreeregressor"],
+    feature_names=feature_names,
     filled=True,
     rounded=True,
-    max_depth=3  # optional: limit depth for clarity
+    max_depth=3
 )
+
 plt.show()
 ```
 
-# Step 6 -- Ethical Considerations
+The plot references the names of the features which we can track down here:
 
-<div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="50%"><a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+```{python}
+final_model.named_steps["columntransformer"].transformers_
+```
 
-<!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
-<!-- social and historical context to work responsibly with data. -->
+## Models that can do harm
 
+- Predictive models are great at **predicting**. 
+- Predictive models are not great in knowing if their model is **harmful**. 
 
-<!-- analogy with "other" category for race, gender -->
-<!-- analogy with student success (what features are associated with higher GPAs,  -->
-<!-- college degrees) -->
+Suppose instead we wanted to predict a student's likelihood of success in
+college. Our predictive model suggests that: 
 
-## 
+- `zip_code`, 
+- `parental_education`, 
+- `first_generation`
+- `standardized_exam_score` 
 
-<div class="tenor-gif-embed" data-postid="15949382497529003446" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/heated-rivalry-ilya-rozanov-connor-storrie-good-job-i-love-you-gif-15949382497529003446">Heated Rivalry Ilya Rozanov GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+are strongly related to students' college performance. 
+
+**Who does this model privilege? Who is being harmed by this model?**
 
