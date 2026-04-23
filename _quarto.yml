@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: docs
+  render: 
+    - "!materials/intro-modeling-python.qmd"
+    - "!materials/intro-modeling-R.qmd"
 
 website:
   title: "Introduction to Predictive Modeling"
