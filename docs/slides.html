@@ -247,6 +247,20 @@ Dr.&nbsp;Allison Theobold
 <h2>Data Context - NHL Player Birthdays</h2>
 <p>We also added in <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-01-09/readme.md">this Tidy Tuesday dataset</a> of player height, weight, and birthday information.</p>
 <p>This information was acquired through the <a href="https://github.com/Zmalski/NHL-API-Reference">NHL API</a>.</p>
+<p><br></p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Why are we interested in hockey data?</strong></p>
+</div>
+<div class="callout-content">
+<p>Dr.&nbsp;Wasila Dahdul will discuss the importance of considering the social and historical context to work responsibly with secondary data!</p>
+</div>
+</div>
+</div>
 </section>
 <section id="loading-the-data" class="slide level2">
 <h2>Loading the Data</h2>
@@ -278,7 +292,7 @@ Dr.&nbsp;Allison Theobold
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_63029e76" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_85c1fa2d" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -313,12 +327,14 @@ Dr.&nbsp;Allison Theobold
 <div class="large">
 <p>What are we looking for?</p>
 </div>
+<div class="midi">
 <ul>
 <li class="fragment"><p><strong>Unusual observations</strong> that we might need to <em>remove</em>.</p></li>
 <li class="fragment"><p>Variables that are very <strong>skewed</strong> and might need to be <em>transformed</em>.</p></li>
 <li class="fragment"><p>Variables that are extremely <strong>multimodal</strong> and might need to be <em>binned</em>.</p></li>
 <li class="fragment"><p>Variables with values that we might want to <strong>omit</strong> from our study because they are <em>not relevant</em> to the question.</p></li>
 </ul>
+</div>
 </section>
 <section id="investigating-with-visuals" class="slide level2">
 <h2>Investigating with Visuals</h2>
@@ -346,7 +362,7 @@ Dr.&nbsp;Allison Theobold
 <p>Do you find anything notable?</p>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_426c834e" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_2a2100dc" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -392,6 +408,7 @@ Dr.&nbsp;Allison Theobold
 <div class="large">
 <p>What are we looking for?</p>
 </div>
+<div class="midi">
 <ul>
 <li class="fragment">Categories that should be <strong>combined</strong> to make a few larger ones.</li>
 <li class="fragment">Variables that should have an <code>"Other"</code> category to combine the rarest categories.</li>
@@ -399,6 +416,7 @@ Dr.&nbsp;Allison Theobold
 <li class="fragment">Variables that are <strong>subsets</strong> of each other, so we might want to include only one or the other.</li>
 <li class="fragment">Anything that suggests <strong>issues with the data</strong> to fix.</li>
 </ul>
+</div>
 </section>
 <section id="investigating-with-visuals-1" class="slide level2">
 <h2>Investigating with Visuals</h2>
@@ -423,7 +441,7 @@ Dr.&nbsp;Allison Theobold
 <p>Do you find anything notable?</p>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_ad35cb6d" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_57ce5c58" minutes="10" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -441,19 +459,37 @@ Dr.&nbsp;Allison Theobold
 <section id="r-code" class="slide level2">
 <h2>R Code</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>data_nhl <span class="ot">&lt;-</span> data_nhl <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a></a>  <span class="fu">distinct</span>(season, </span>
-<span id="cb5-3"><a></a>           team, </span>
-<span id="cb5-4"><a></a>           first_name, </span>
-<span id="cb5-5"><a></a>           last_name, </span>
-<span id="cb5-6"><a></a>           <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb5-7"><a></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-8"><a></a>    <span class="at">can_or_usa =</span> <span class="fu">fct_lump</span>(birth_country, <span class="at">n =</span> <span class="dv">2</span>)</span>
-<span id="cb5-9"><a></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>data_nhl <span class="ot">&lt;-</span> data_nhl <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(season, </span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a>           team, </span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a>           first_name, </span>
+<span id="cb5-5"><a aria-hidden="true" tabindex="-1"></a>           last_name, </span>
+<span id="cb5-6"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-8"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">can_or_usa =</span> <span class="fu">fct_lump</span>(birth_country, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb5-9"><a aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="python-code" class="slide level2">
 <h2>Python Code</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a>data_nhl <span class="op">=</span> data_nhl.drop_duplicates(</span>
+<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a>  subset <span class="op">=</span> [<span class="st">"season"</span>, <span class="st">"team"</span>, <span class="st">"first_name"</span>, <span class="st">"last_name"</span>]</span>
+<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a aria-hidden="true" tabindex="-1"></a>top_countries <span class="op">=</span> (</span>
+<span id="cb6-6"><a aria-hidden="true" tabindex="-1"></a>  data_nhl[<span class="st">"birth_country"</span>]</span>
+<span id="cb6-7"><a aria-hidden="true" tabindex="-1"></a>  .value_counts()</span>
+<span id="cb6-8"><a aria-hidden="true" tabindex="-1"></a>  .nlargest(<span class="dv">2</span>)</span>
+<span id="cb6-9"><a aria-hidden="true" tabindex="-1"></a>  .index</span>
+<span id="cb6-10"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-11"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a aria-hidden="true" tabindex="-1"></a>data_nhl[<span class="st">"can_or_usa"</span>] <span class="op">=</span> (</span>
+<span id="cb6-13"><a aria-hidden="true" tabindex="-1"></a>  data_nhl[<span class="st">"birth_country"</span>]</span>
+<span id="cb6-14"><a aria-hidden="true" tabindex="-1"></a>  .where(data_nhl[<span class="st">"birth_country"</span>].isin(top_countries),</span>
+<span id="cb6-15"><a aria-hidden="true" tabindex="-1"></a>         <span class="st">"Other"</span>)</span>
+<span id="cb6-16"><a aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 <section id="data-ethics-categorical-variables" class="slide level2">
 <h2>Data Ethics &amp; Categorical Variables</h2>
@@ -461,16 +497,16 @@ Dr.&nbsp;Allison Theobold
 <ul>
 <li>Creating an “Other” category might feel fairly benign, but this isn’t always the case.
 <ul>
-<li>Let’s consider a different variable—gender.</li>
+<li>Let’s consider a different variable—<code>gender</code>.</li>
 </ul></li>
 </ul>
 </div>
 <div class="fragment">
 <div class="midi">
 <ul>
-<li>Suppose we lump all the PALiISaDS students not identifying as a woman or a man into a category named “Other”.
+<li>Suppose we lump all the PALiISaDS students not identifying as a woman or a man into a category named “Other.”
 <ul>
-<li>What message does that send to students who are non-binary or trans?</li>
+<li>What message does that send to students who identify as non-binary or trans*?</li>
 </ul></li>
 </ul>
 </div>
@@ -478,7 +514,7 @@ Dr.&nbsp;Allison Theobold
 <div class="fragment">
 <div class="midi">
 <ul>
-<li>What if we created two levels for racial groups—“White” and “Non-White”.
+<li>What if we created two levels for the variable <code>race</code>—<code>"White"</code> and <code>"Non-White"</code>.
 <ul>
 <li>What message does that send to students of color?</li>
 </ul></li>
@@ -489,19 +525,36 @@ Dr.&nbsp;Allison Theobold
 <section id="check-in" class="slide level2">
 <h2>Check-in!</h2>
 <p>Let’s re-visualize the “problem” variables to make sure our cleaning changes accomplished what we hoped!</p>
+<p>Variables to Check:</p>
+<ul>
+<li><code>points</code></li>
+<li><code>penalty_minutes</code></li>
+<li><code>games_played</code></li>
+<li><code>season</code></li>
+<li><code>can_or_usa</code></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<countdown-timer class="countdown" id="timer_78ddf67b" minutes="5" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+</div>
+</div>
 </section></section>
 <section>
 <section id="step-3-chooing-candidate-predictors" class="title-slide slide level1 center">
 <h1>Step 3: Chooing Candidate Predictors</h1>
-<div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="80%">
+<div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="70%">
 <a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a>
 </div>
 <script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
 </section>
 <section id="which-of-these-variables-are-associated-with-scoring-points" class="slide level2">
 <h2>Which of these variables are associated with scoring points?</h2>
-<p>We will answer this question with a <em>predictive model</em>, that uses information in some <em>predictor</em> variables to create a process for guessing the value of the <em>target</em> variable (<code>points</code>).</p>
-<p>To decide which variables are worth including in our eventual model, we need to understand how they associate with the target variable of <code>points</code>.</p>
+<p>We will answer this question with a <em>predictive model</em>.</p>
+<ul>
+<li>Information from <strong>predictor variables</strong> will help us guess the value of the <strong>target variable</strong> (<code>points</code>).</li>
+</ul>
+<p><br></p>
+<p>To decide which variable(s) to use as <em>predictors</em>, we need to find the variables with the <strong>strongest</strong> relationship with <code>points</code>.</p>
 </section>
 <section id="numeric-variables-1" class="slide level2">
 <h2>Numeric Variables</h2>
@@ -510,6 +563,8 @@ Dr.&nbsp;Allison Theobold
 <li><p>Use the code provided to visualize the relationship between <code>points</code> and a few of these potential predictors.</p></li>
 <li><p>Decide which variable(s) seem to have the strongest relationship with our target variable (<code>points</code>).</p></li>
 </ul>
+<div class="columns">
+<div class="column" style="width:75%;">
 <div class="fragment">
 <div class="callout callout-warning callout-titled callout-style-default">
 <div class="callout-body">
@@ -525,6 +580,15 @@ Dr.&nbsp;Allison Theobold
 </div>
 </div>
 </div>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:30%;">
+<div class="cell">
+<div class="cell-output-display">
+<countdown-timer class="countdown" id="timer_e5c0ffe8" minutes="7" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+</div>
+</div>
+</div></div>
 </section>
 <section id="categorical-variables-1" class="slide level2">
 <h2>Categorical Variables</h2>
@@ -533,7 +597,11 @@ Dr.&nbsp;Allison Theobold
 <li><p>Use the code provided to visualize the relationship between <code>points</code> and a few of these potential predictors.</p></li>
 <li><p>Decide which variable(s) seem to have the strongest relationship with our target variable (<code>points</code>).</p></li>
 </ul>
-<!-- THIS NEEDS FIXED -->
+<div class="cell">
+<div class="cell-output-display">
+<countdown-timer class="countdown" id="timer_2755b567" minutes="7" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+</div>
+</div>
 </section>
 <section id="multiple-variables" class="slide level2">
 <h2>Multiple Variables</h2>
@@ -555,23 +623,23 @@ Dr.&nbsp;Allison Theobold
 <p><strong>R Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a>rec_all <span class="ot">&lt;-</span> <span class="fu">recipe</span>(points <span class="sc">~</span> height <span class="sc">+</span> weight <span class="sc">+</span> age <span class="sc">+</span> can_or_usa <span class="sc">+</span> </span>
-<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a>                  birth_month <span class="sc">+</span> position_code <span class="sc">+</span> season <span class="sc">+</span> team <span class="sc">+</span> </span>
-<span id="cb6-5"><a aria-hidden="true" tabindex="-1"></a>                  penalty_minutes, <span class="at">data =</span> data_nhl)</span>
-<span id="cb6-6"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a aria-hidden="true" tabindex="-1"></a>rec_best <span class="ot">&lt;-</span> <span class="fu">recipe</span>(points <span class="sc">~</span> position_type <span class="sc">+</span> season <span class="sc">+</span> team, </span>
-<span id="cb6-8"><a aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>rec_all <span class="ot">&lt;-</span> <span class="fu">recipe</span>(points <span class="sc">~</span> height <span class="sc">+</span> weight <span class="sc">+</span> age <span class="sc">+</span> can_or_usa <span class="sc">+</span> </span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a>                  birth_month <span class="sc">+</span> position_code <span class="sc">+</span> season <span class="sc">+</span> team <span class="sc">+</span> </span>
+<span id="cb7-5"><a aria-hidden="true" tabindex="-1"></a>                  penalty_minutes, <span class="at">data =</span> data_nhl)</span>
+<span id="cb7-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a aria-hidden="true" tabindex="-1"></a>rec_best <span class="ot">&lt;-</span> <span class="fu">recipe</span>(points <span class="sc">~</span> position_type <span class="sc">+</span> season <span class="sc">+</span> team, </span>
+<span id="cb7-8"><a aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><strong>Python Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a>vars_all <span class="op">=</span> [<span class="st">"height"</span>, <span class="st">"weight"</span>, <span class="st">"age"</span>, <span class="st">"can_or_usa"</span>, <span class="st">"birth_month"</span>, </span>
-<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"position_code"</span>, <span class="st">"season"</span>, <span class="st">"team"</span>, <span class="st">"penalty_minutes"</span>]</span>
-<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a>vars_best <span class="op">=</span> [<span class="st">"position_type"</span>, <span class="st">"season"</span>, <span class="st">"team"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a>vars_all <span class="op">=</span> [<span class="st">"height"</span>, <span class="st">"weight"</span>, <span class="st">"age"</span>, <span class="st">"can_or_usa"</span>, <span class="st">"birth_month"</span>, </span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"position_code"</span>, <span class="st">"season"</span>, <span class="st">"team"</span>, <span class="st">"penalty_minutes"</span>]</span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>vars_best <span class="op">=</span> [<span class="st">"position_type"</span>, <span class="st">"season"</span>, <span class="st">"team"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -605,22 +673,22 @@ Dr.&nbsp;Allison Theobold
 <p><strong>R Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a>lr_spec <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
-<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>lr_spec <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><strong>Python Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
-<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span>
-<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a>lr_spec <span class="op">=</span> LinearRegression()</span>
-<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a aria-hidden="true" tabindex="-1"></a>dt_spec <span class="op">=</span> DecisionTreeRegressor(min_samples_leaf <span class="op">=</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a aria-hidden="true" tabindex="-1"></a>lr_spec <span class="op">=</span> LinearRegression()</span>
+<span id="cb10-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a aria-hidden="true" tabindex="-1"></a>dt_spec <span class="op">=</span> DecisionTreeRegressor(min_samples_leaf <span class="op">=</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- ::: {.callout-important} -->
 <!-- A decision tree has a **hyperparameter** we can specify---`min_samples_leaf` or -->
@@ -659,7 +727,7 @@ Dr.&nbsp;Allison Theobold
 <section id="combining-data-models" class="slide level2">
 <h2>Combining Data &amp; Models</h2>
 <p><br></p>
-<p>Finally, we will try all our different <strong>model type</strong> options with all our different <strong>recipe and preprocessing</strong> choices.</p>
+<p>We will try all our different <strong>model type</strong> options with all our different <strong>recipe and preprocessing</strong> choices.</p>
 <p>Each of these candidate options is called a <strong>workflow</strong> or a <strong>pipeline</strong>.</p>
 </section>
 <section id="r-python-code-4" class="slide level2">
@@ -667,19 +735,19 @@ Dr.&nbsp;Allison Theobold
 <p><strong>R Code (Template)</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>() <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><br></p>
 <p><strong>Python Code (Template)</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
-<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.base <span class="im">import</span> clone</span>
-<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a aria-hidden="true" tabindex="-1"></a>make_pipeline(clone(recipe), clone(model))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.base <span class="im">import</span> clone</span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a>make_pipeline(clone(recipe), clone(model))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -693,7 +761,7 @@ Dr.&nbsp;Allison Theobold
 <section>
 <section id="step-4-choosing-between-competing-models" class="title-slide slide level1 center">
 <h1>Step 4 – Choosing between Competing Models</h1>
-<p>Everything we have done to this point was <em>setup</em>: establishing our plans for a few different workflows to try.</p>
+<p>Everything we have done to this point was <em>setup</em>.🤪 But now we’re ready to try out our workflows!</p>
 </section>
 <section id="comparing-models" class="slide level2 scrollable">
 <h2>Comparing Models</h2>
@@ -733,23 +801,23 @@ Dr.&nbsp;Allison Theobold
 <p><strong>R Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2244</span>)</span>
-<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(data_nhl, <span class="at">prop =</span> <span class="fl">0.8</span>)</span>
-<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a aria-hidden="true" tabindex="-1"></a>data_nhl_train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
-<span id="cb12-6"><a aria-hidden="true" tabindex="-1"></a>data_nhl_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2244</span>)</span>
+<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(data_nhl, <span class="at">prop =</span> <span class="fl">0.8</span>)</span>
+<span id="cb13-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a aria-hidden="true" tabindex="-1"></a>data_nhl_train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb13-6"><a aria-hidden="true" tabindex="-1"></a>data_nhl_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><strong>Python Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a aria-hidden="true" tabindex="-1"></a>data_nhl_train, data_nhl_test <span class="op">=</span> train_test_split(data_nhl, </span>
-<span id="cb13-5"><a aria-hidden="true" tabindex="-1"></a>                                                 test_size <span class="op">=</span> <span class="fl">0.2</span>, </span>
-<span id="cb13-6"><a aria-hidden="true" tabindex="-1"></a>                                                 random_state <span class="op">=</span> <span class="dv">2244</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a aria-hidden="true" tabindex="-1"></a>data_nhl_train, data_nhl_test <span class="op">=</span> train_test_split(data_nhl, </span>
+<span id="cb14-5"><a aria-hidden="true" tabindex="-1"></a>                                                 test_size <span class="op">=</span> <span class="fl">0.2</span>, </span>
+<span id="cb14-6"><a aria-hidden="true" tabindex="-1"></a>                                                 random_state <span class="op">=</span> <span class="dv">2244</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -758,21 +826,22 @@ Dr.&nbsp;Allison Theobold
 <p><strong>R Code (Template)</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Fit workflow on training data</span></span>
-<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a>wflow_lr_all_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(wflow_lr_all, <span class="at">data =</span> data_nhl_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Fit workflow on training data</span></span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>wflow_lr_all_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(wflow_lr_all, </span>
+<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> data_nhl_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><br></p>
 <p><strong>Python Code (Template)</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into predictors</span></span>
-<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> data_nhl_train.drop(columns <span class="op">=</span> [<span class="st">"points"</span>])</span>
-<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># and target</span></span>
-<span id="cb15-4"><a aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> data_nhl_train[<span class="st">"points"</span>]</span>
-<span id="cb15-5"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Fit workflow on training data</span></span>
-<span id="cb15-7"><a aria-hidden="true" tabindex="-1"></a>wflow_lr_all_fit <span class="op">=</span> wflow_lr_all.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into predictor variables</span></span>
+<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> data_nhl_train.drop(columns <span class="op">=</span> [<span class="st">"points"</span>])</span>
+<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># and target variable</span></span>
+<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> data_nhl_train[<span class="st">"points"</span>]</span>
+<span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Fit workflow on training data</span></span>
+<span id="cb16-7"><a aria-hidden="true" tabindex="-1"></a>wflow_lr_all_fit <span class="op">=</span> wflow_lr_all.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -790,6 +859,7 @@ Dr.&nbsp;Allison Theobold
 </div>
 <div class="callout-content">
 <p>In this analysis, we are using <em>root mean squared error</em> as our <strong>metric</strong> for the test data. That is, we take the squared difference between the <em>predicted</em> number of points a player will get and the <em>actual</em> number of points they get, then we add those numbers up and take the average.</p>
+<p><br></p>
 <p><span class="math display">\[ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}\]</span></p>
 </div>
 </div>
@@ -800,29 +870,35 @@ Dr.&nbsp;Allison Theobold
 <h2>R &amp; Python Code</h2>
 <!-- NEED TO FIX -->
 <p><strong>R Code (Template)</strong></p>
+<div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Generate predictions</span></span>
-<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a>pred_lr_all <span class="ot">&lt;-</span> <span class="fu">predict</span>(wflow_lr_all_fit, <span class="at">new_data =</span> data_nhl_test) <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(data_nhl_test)</span>
-<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Compute RMSE metric</span></span>
-<span id="cb16-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(pred_lr_all, <span class="at">truth =</span> points, <span class="at">estimate =</span> .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Generate predictions</span></span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a>pred_lr_all <span class="ot">&lt;-</span> <span class="fu">predict</span>(wflow_lr_all_fit, </span>
+<span id="cb17-3"><a aria-hidden="true" tabindex="-1"></a>                       <span class="at">new_data =</span> data_nhl_test) <span class="sc">|&gt;</span> </span>
+<span id="cb17-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(data_nhl_test)</span>
+<span id="cb17-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Compute RMSE metric</span></span>
+<span id="cb17-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rmse</span>(pred_lr_all, <span class="at">truth =</span> points, <span class="at">estimate =</span> .pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<!-- CHECK IF THIS WORKS! -->
+</div>
+<div class="fragment">
 <p><strong>Python Code (Template)</strong></p>
+<div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
-<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into predictors</span></span>
-<span id="cb17-4"><a aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> data_nhl_test.drop(columns <span class="op">=</span> [<span class="st">"points"</span>])</span>
-<span id="cb17-5"><a aria-hidden="true" tabindex="-1"></a><span class="co"># and target</span></span>
-<span id="cb17-6"><a aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> data_nhl_test[<span class="st">"points"</span>]</span>
-<span id="cb17-7"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
-<span id="cb17-9"><a aria-hidden="true" tabindex="-1"></a>pred_lr_all <span class="op">=</span> wflow_lr_all_fit.predict(X_test)</span>
-<span id="cb17-10"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate prediction errors</span></span>
-<span id="cb17-12"><a aria-hidden="true" tabindex="-1"></a>rmse_lr_all <span class="op">=</span> np.sqrt(mean_squared_error(y_test, pred_lr_all))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
+<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into predictors</span></span>
+<span id="cb18-4"><a aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> data_nhl_test.drop(columns <span class="op">=</span> [<span class="st">"points"</span>])</span>
+<span id="cb18-5"><a aria-hidden="true" tabindex="-1"></a><span class="co"># and target</span></span>
+<span id="cb18-6"><a aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> data_nhl_test[<span class="st">"points"</span>]</span>
+<span id="cb18-7"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb18-9"><a aria-hidden="true" tabindex="-1"></a>pred_lr_all <span class="op">=</span> wflow_lr_all_fit.predict(X_test)</span>
+<span id="cb18-10"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate prediction errors</span></span>
+<span id="cb18-12"><a aria-hidden="true" tabindex="-1"></a>rmse_lr_all <span class="op">=</span> np.sqrt(mean_squared_error(y_test, pred_lr_all))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
 </div>
 </section>
 <section id="what-did-you-get" class="slide level2">
@@ -837,17 +913,36 @@ Dr.&nbsp;Allison Theobold
 <div class="fragment">
 <p><br></p>
 <p>So, we have one last model fitting task:</p>
+<div class="columns">
+<div class="column" style="width:40%;">
 <p><strong>R Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>final_model <span class="ot">&lt;-</span> _______ <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a>final_model <span class="ot">&lt;-</span> _______ <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:55%;">
 <p><strong>Python Code</strong></p>
 <div class="midi">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a>final_model <span class="op">=</span> _______.fit(data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a>final_model <span class="op">=</span> _______.fit(data_nhl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Insert the name of the workflow!</strong></p>
+</div>
+<div class="callout-content">
+
+</div>
 </div>
 </div>
 </div>
@@ -883,30 +978,33 @@ Dr.&nbsp;Allison Theobold
 <section id="in-r" class="slide level2">
 <h2>In R</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
-<span id="cb20-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Pull out the parsnip model object</span></span>
-<span id="cb20-4"><a aria-hidden="true" tabindex="-1"></a>tree_fit <span class="ot">&lt;-</span> <span class="fu">extract_fit_parsnip</span>(final_model)</span>
-<span id="cb20-5"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(tree_fit<span class="sc">$</span>fit, <span class="at">roundint =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Pull out the parsnip model object</span></span>
+<span id="cb21-4"><a aria-hidden="true" tabindex="-1"></a>tree_fit <span class="ot">&lt;-</span> <span class="fu">extract_fit_parsnip</span>(final_model)</span>
+<span id="cb21-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(tree_fit<span class="sc">$</span>fit, <span class="at">roundint =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="slides_files/figure-revealjs/dendrogram-plot-R-1.png" width="960" class="r-stretch"></section>
 <section id="in-python" class="slide level2">
 <h2>In Python</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> plot_tree</span>
-<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb21-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>, <span class="dv">8</span>))</span>
-<span id="cb21-5"><a aria-hidden="true" tabindex="-1"></a>plot_tree(</span>
-<span id="cb21-6"><a aria-hidden="true" tabindex="-1"></a>    final_model.named_steps[<span class="st">"dt_spec"</span>],</span>
-<span id="cb21-7"><a aria-hidden="true" tabindex="-1"></a>    feature_names <span class="op">=</span> X_train.columns,</span>
-<span id="cb21-8"><a aria-hidden="true" tabindex="-1"></a>    filled <span class="op">=</span> <span class="va">True</span>,</span>
-<span id="cb21-9"><a aria-hidden="true" tabindex="-1"></a>    rounded <span class="op">=</span> <span class="va">True</span>,</span>
-<span id="cb21-10"><a aria-hidden="true" tabindex="-1"></a>    max_depth <span class="op">=</span> <span class="dv">3</span>  <span class="co"># optional: limit depth for clarity</span></span>
-<span id="cb21-11"><a aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-12"><a aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> plot_tree</span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a aria-hidden="true" tabindex="-1"></a>n_features <span class="op">=</span> final_model.named_steps[<span class="st">"decisiontreeregressor"</span>].n_features_in_</span>
+<span id="cb22-5"><a aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> [<span class="ss">f"feature_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_features)]</span>
+<span id="cb22-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>))</span>
+<span id="cb22-8"><a aria-hidden="true" tabindex="-1"></a>plot_tree(</span>
+<span id="cb22-9"><a aria-hidden="true" tabindex="-1"></a>    final_model.named_steps[<span class="st">"decisiontreeregressor"</span>],</span>
+<span id="cb22-10"><a aria-hidden="true" tabindex="-1"></a>    feature_names<span class="op">=</span>feature_names,</span>
+<span id="cb22-11"><a aria-hidden="true" tabindex="-1"></a>    filled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb22-12"><a aria-hidden="true" tabindex="-1"></a>    rounded<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb22-13"><a aria-hidden="true" tabindex="-1"></a>    max_depth<span class="op">=</span><span class="dv">3</span></span>
+<span id="cb22-14"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-15"><a aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section></section>
 <section>
@@ -916,10 +1014,51 @@ Dr.&nbsp;Allison Theobold
 <a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a>
 </div>
 <script type="text/javascript" async="" src="https://tenor.com/embed.js"></script>
-<!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
-<!-- social and historical context to work responsibly with data. -->
-<!-- analogy with student success (what features are associated with higher GPAs,  -->
-<!-- college degrees) -->
+</section>
+<section id="models-that-can-do-harm" class="slide level2">
+<h2>Models that can do harm</h2>
+<div class="midi">
+<ul>
+<li>Predictive models are great at <strong>predicting</strong>.</li>
+<li>Predictive models are not great in knowing if their model is <strong>harmful</strong>.</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="midi">
+<p>Suppose instead we wanted to predict a student’s likelihood of success in college. Our predictive model suggests that:</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<ul>
+<li><code>zip_code</code>,</li>
+<li><code>parental_education</code>,</li>
+</ul>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<ul>
+<li><code>first_generation</code></li>
+<li><code>standardized_exam_score</code></li>
+</ul>
+</div></div>
+<p>are strongly related to students’ college performance.</p>
+</div>
+</div>
+<div class="fragment">
+<p><br></p>
+<div style="font-size: 1.25em; color: #ed8402;">
+<p><strong>Who does this model privilege? Who is being harmed by this model?</strong></p>
+</div>
+<!-- Socioeconomic Status Proxies -->
+<!-- Zip code or neighborhood of residence (correlates with school quality and resources) -->
+<!-- High school attended (public vs. private, school district funding) -->
+<!-- Parental education level and occupation -->
+<!-- Extracurricular activities (cost money, require parental transportation, free time) -->
+<!-- Unpaid internship or volunteer experience (requires financial cushion) -->
+<!-- Race-Correlated Variables -->
+<!-- "First-generation college student" status (disproportionately students of color) -->
+<!-- High school GPA from under-resourced schools (grading environments differ) -->
+<!-- Standardized test scores (well-documented score gaps driven largely by resource access, not ability) -->
+</div>
 </section>
 <section id="section-1" class="slide level2">
 <h2></h2>

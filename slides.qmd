@@ -64,9 +64,19 @@ We also added in [this Tidy Tuesday dataset](https://github.com/rfordatascience/
 
 This information was acquired through the [NHL API](https://github.com/Zmalski/NHL-API-Reference). 
 
+</br>
+
+::: {.callout-tip}
+# Why are we interested in hockey data?
+
+Dr. Wasila Dahdul will discuss the importance of considering the social and 
+historical context to work responsibly with secondary data!
+:::
+
 ## Loading the Data 
 
-I've saved the `.csv` to Dropbox, so we can read it in using a URL. Run the code provided to load the data.
+I've saved the `.csv` to Dropbox, so we can read it in using a URL. Run the code
+provided to load the data.
 
 </br>
 
@@ -154,6 +164,7 @@ What are we looking for?
 :::
 
 ::: {.incremental}
+::: {.midi}
 -   **Unusual observations** that we might need to *remove*.
 
 -   Variables that are very **skewed** and might need to be *transformed*.
@@ -162,6 +173,7 @@ What are we looking for?
 
 -   Variables with values that we might want to **omit** from our study because
 they are *not relevant* to the question.
+:::
 :::
 
 ## Investigating with Visuals
@@ -234,7 +246,8 @@ season.
 
 2. These are data entry or recording errors.
 
-Either way, we will choose to omit them, since they might be misleading to our results.
+Either way, we will choose to omit them, since they might be misleading to our
+results.
 
 ## R & Python Code
 
@@ -282,6 +295,7 @@ What are we looking for?
 :::
 
 ::: {.incremental}
+::: {.midi}
 -   Categories that should be **combined** to make a few larger ones.
 -   Variables that should have an `"Other"` category to combine the rarest
 categories.
@@ -290,6 +304,7 @@ analysis.
 - Variables that are **subsets** of each other, so we might want to include only
 one or the other.
 - Anything that suggests **issues with the data** to fix.
+:::
 :::
 
 ## Investigating with Visuals
@@ -362,6 +377,7 @@ far too many different values to reasonable use.
 
 ```{r}
 #| echo: true
+#| code-line-numbers: false
 
 data_nhl <- data_nhl |>
   distinct(season, 
@@ -377,6 +393,8 @@ data_nhl <- data_nhl |>
 ## Python Code
 
 ```{python}
+#| echo: true
+#| code-line-numbers: false
 
 data_nhl = data_nhl.drop_duplicates(
   subset = ["season", "team", "first_name", "last_name"]
@@ -401,21 +419,23 @@ data_nhl["can_or_usa"] = (
 ::: {.midi}
 - Creating an "Other" category might feel fairly benign, but this isn't always 
 the case. 
-    * Let's consider a different variable---gender. 
+    * Let's consider a different variable---`gender`. 
 :::
 
 . . .
 
 ::: {.midi}
 - Suppose we lump all the PALiISaDS students not identifying as a woman or a man
-into a category named "Other". 
-    * What message does that send to students who are non-binary or trans? 
+into a category named "Other." 
+    * What message does that send to students who identify as non-binary or
+    trans*? 
 :::
 
 . . .
 
 ::: {.midi}
-- What if we created two levels for racial groups---"White" and "Non-White".
+- What if we created two levels for the variable `race`---`"White"` and `
+"Non-White"`.
     * What message does that send to students of color? 
 :::
 
@@ -424,17 +444,34 @@ into a category named "Other".
 Let's re-visualize the "problem" variables to make sure our cleaning changes
 accomplished what we hoped!
 
+Variables to Check:
+
+- `points`
+- `penalty_minutes`
+- `games_played`
+- `season` 
+- `can_or_usa`
+
+```{r}
+#| echo: false
+countdown::countdown(minutes = 5)
+```
+
 # Step 3: Chooing Candidate Predictors
 
-<div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="80%"><a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+<div class="tenor-gif-embed" data-postid="11908322268205867644" data-share-method="host" data-aspect-ratio="1.46471" data-width="70%"><a href="https://tenor.com/view/heated-rivalry-shane-hollander-let%27s-go-shane-hollander-let%27s-go-heated-rivalry-shane-gif-11908322268205867644">Heated Rivalry Shane Hollander GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
 ## Which of these variables are associated with scoring points?
 
-We will answer this question with a *predictive model*, that uses information in
-some *predictor* variables to create a process for guessing the value of the
-*target* variable (`points`).
+We will answer this question with a *predictive model*. 
 
-To decide which variables are worth including in our eventual model, we need to understand how they associate with the target variable of `points`.
+- Information from **predictor variables** will help us guess the value of 
+the **target variable** (`points`).
+
+</br>
+
+To decide which variable(s) to use as *predictors*, we need to find the 
+variables with the **strongest** relationship with `points`.
 
 ## Numeric Variables
 
@@ -447,13 +484,29 @@ of these potential predictors.
 - Decide which variable(s) seem to have the strongest relationship with our
 target variable (`points`). 
 
-. . .
-
+::: columns
+::: {.column width="75%"}
+::: {.fragment}
 :::{.callout-warning}
 You may have noticed that `goals`, `assists`, and `plusminus` are highly
 associated with `points`.  Why might it be a bad idea to use these as predictors
 in our model? 
 :::
+:::
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="30%"}
+```{r}
+#| echo: false
+countdown::countdown(minutes = 7)
+```
+
+:::
+:::
+
 
 ```{r}
 #| label: ggplot-template-two-numeric
@@ -493,6 +546,11 @@ of these potential predictors.
 target variable (`points`). 
 
 ```{r}
+#| echo: false
+countdown::countdown(minutes = 7)
+```
+
+```{r}
 #| label: ggplot-template-num-cat
 #| echo: false
 #| eval: false
@@ -505,19 +563,18 @@ ggplot(data = data_nhl,
   geom_density_ridges()
 ```
 
-<!-- THIS NEEDS FIXED -->
 ```{python}
 #| label: plotnine-template-num-cat
 #| echo: false
 #| eval: false
 
-from plotnine.geoms import geom_density_2d
+from ridgenine import geom_density_ridges
 
 (
   ggplot(data = data_nhl, 
          mapping = aes(x = "points", y = "position_type")
          ) +
-  geom_density_2d()
+  geom_density_ridges() 
 )
 ```
 
@@ -766,7 +823,7 @@ rec_best = ColumnTransformer([
 
 </br>
 
-Finally, we will try all our different **model type** options with all our
+We will try all our different **model type** options with all our
 different **recipe and preprocessing** choices.
 
 Each of these candidate options is called a **workflow** or a **pipeline**.
@@ -856,8 +913,8 @@ wflow_dt_best = make_pipeline(clone(rec_best), clone(dt_spec))
 
 # Step 4 -- Choosing between Competing Models
 
-Everything we have done to this point was *setup*: establishing our plans for a
-few different workflows to try.
+Everything we have done to this point was *setup*.🤪 But now we're ready to 
+try out our workflows!
 
 ## Comparing Models
 
@@ -937,7 +994,8 @@ data_nhl_train, data_nhl_test = train_test_split(data_nhl,
 #| code-line-numbers: false
 
 # Fit workflow on training data
-wflow_lr_all_fit <- fit(wflow_lr_all, data = data_nhl_train)
+wflow_lr_all_fit <- fit(wflow_lr_all, 
+                        data = data_nhl_train)
 ```
 :::
 
@@ -951,9 +1009,9 @@ wflow_lr_all_fit <- fit(wflow_lr_all, data = data_nhl_train)
 #| echo: true
 #| code-line-numbers: false
 
-# Split data into predictors
+# Split data into predictor variables
 X_train = data_nhl_train.drop(columns = ["points"])
-# and target
+# and target variable
 y_train = data_nhl_train["points"]
 
 # Fit workflow on training data
@@ -982,6 +1040,8 @@ the test data.  That is, we take the squared difference between the *predicted*
 number of points a player will get and the *actual* number of points they get, 
 then we add those numbers up and take the average. 
 
+</br>
+
 $$ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}$$
 :::
 :::
@@ -992,20 +1052,22 @@ $$ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}$$
 
 **R Code (Template)**
 
+::: {.midi}
 ```{r}
 #| echo: true
 #| eval: false
 #| code-line-numbers: false
 
 # Generate predictions
-pred_lr_all <- predict(wflow_lr_all_fit, new_data = data_nhl_test) |> 
+pred_lr_all <- predict(wflow_lr_all_fit, 
+                       new_data = data_nhl_test) |> 
   bind_cols(data_nhl_test)
 
 # Compute RMSE metric
 rmse(pred_lr_all, truth = points, estimate = .pred)
 ```
+:::
 
-<!-- CHECK IF THIS WORKS! -->
 ```{r}
 #| label: predict-R
 #| eval: false
@@ -1037,8 +1099,11 @@ rmse(pred_dt_best, truth = points, estimate = .pred)
 
 ```
 
+. . .
+
 **Python Code (Template)**
 
+::: {.midi}
 ```{python}
 #| echo: true
 #| eval: false
@@ -1056,8 +1121,8 @@ pred_lr_all = wflow_lr_all_fit.predict(X_test)
 
 # Calculate prediction errors
 rmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))
-
 ```
+:::
 
 ```{python}
 #| label: predict-python
@@ -1109,6 +1174,8 @@ final conclusions!
 
 So, we have one last model fitting task:
 
+::: columns
+::: {.column width="40%"}
 **R Code**
 
 ::: {.midi}
@@ -1123,6 +1190,12 @@ final_model <- _______ |>
 ```
 :::
 
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="55%"}
 **Python Code**
 
 ::: {.midi}
@@ -1134,6 +1207,12 @@ final_model <- _______ |>
 
 final_model = _______.fit(data_nhl)
 ```
+:::
+:::
+:::
+
+::: {.callout-tip}
+# Insert the name of the workflow!
 :::
 
 # Step 5 -- Interpreting Model Conclusions
@@ -1159,11 +1238,24 @@ Since our best final model was a *decision tree*, we'll make a
 ## In R
 
 ```{r}
-#| label: final-model
+#| label: final-model-R
 #| echo: false
 
-final_model <- wflow_dt_all |> fit(data_nhl)
+final_model <- fit(wflow_dt_all, data = data_nhl)
 ```
+
+```{python}
+#| echo: false
+#| eval: false
+
+# Declare predictor variables
+X_full = data_nhl.drop(columns = ["points"])
+# Declare target variable
+y_full = data_nhl["points"]
+
+final_model = wflow_dt_all.fit(X_full, y_full)
+```
+
 
 ```{r}
 #| label: dendrogram-plot-R
@@ -1190,26 +1282,75 @@ rpart.plot(tree_fit$fit, roundint = FALSE)
 from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
 
-plt.figure(figsize = (16, 8))
+n_features = final_model.named_steps["decisiontreeregressor"].n_features_in_
+feature_names = [f"feature_{i}" for i in range(n_features)]
+
+plt.figure(figsize=(16, 8))
 plot_tree(
-    final_model.named_steps["dt_spec"],
-    feature_names = X_train.columns,
-    filled = True,
-    rounded = True,
-    max_depth = 3  # optional: limit depth for clarity
+    final_model.named_steps["decisiontreeregressor"],
+    feature_names=feature_names,
+    filled=True,
+    rounded=True,
+    max_depth=3
 )
 plt.show()
+
 ```
 
 # Step 6 -- Ethical Considerations
 
 <div class="tenor-gif-embed" data-postid="11102954406056326040" data-share-method="host" data-aspect-ratio="1" data-width="50%"><a href="https://tenor.com/view/kip-grady-heated-rivalry-gif-11102954406056326040">Kip Grady Heated Rivalry GIF</a>from <a href="https://tenor.com/search/kip+grady-gifs">Kip Grady GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
-<!-- What will be discussed in Secondary Data and Responsible Data Reuse -->
-<!-- social and historical context to work responsibly with data. -->
+## Models that can do harm
 
-<!-- analogy with student success (what features are associated with higher GPAs,  -->
-<!-- college degrees) -->
+::: {.midi}
+- Predictive models are great at **predicting**. 
+- Predictive models are not great in knowing if their model is **harmful**. 
+:::
+
+. . .
+
+::: {.midi}
+Suppose instead we wanted to predict a student's likelihood of success in
+college. Our predictive model suggests that: 
+
+::: columns
+::: {.column width="48%"}
+- `zip_code`, 
+- `parental_education`, 
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+- `first_generation`
+- `standardized_exam_score` 
+:::
+:::
+
+are strongly related to students' college performance. 
+:::
+
+. . .
+
+</br>
+
+::: {style="font-size: 1.25em; color: #ed8402;"}
+**Who does this model privilege? Who is being harmed by this model?**
+:::
+
+<!-- Socioeconomic Status Proxies -->
+<!-- Zip code or neighborhood of residence (correlates with school quality and resources) -->
+<!-- High school attended (public vs. private, school district funding) -->
+<!-- Parental education level and occupation -->
+<!-- Extracurricular activities (cost money, require parental transportation, free time) -->
+<!-- Unpaid internship or volunteer experience (requires financial cushion) -->
+
+<!-- Race-Correlated Variables -->
+<!-- "First-generation college student" status (disproportionately students of color) -->
+<!-- High school GPA from under-resourced schools (grading environments differ) -->
+<!-- Standardized test scores (well-documented score gaps driven largely by resource access, not ability) -->
 
 ## 
 
