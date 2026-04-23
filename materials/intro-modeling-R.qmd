@@ -25,7 +25,6 @@ provided to load the data.
 
 ```{r}
 #| label: load-data-R
-#| echo: true
 
 library(tidyverse)
 
@@ -404,6 +403,7 @@ called the *training set*.
 
 ```{r}
 #| label: test-train-split
+
 # Same seed as Python users get consistent results
 set.seed(____)
 
@@ -466,7 +466,6 @@ pred_dt_best <- predict(wflow_dt_best_fit,
   bind_cols(data_nhl_test)
 
 # Compute RMSE metrics
-
 rmse(pred_lr_all, 
      truth = points, 
      estimate = .pred)
@@ -500,9 +499,6 @@ final conclusions!
 So, we have one last model fitting task:
 
 ```{python}
-#| eval: false
-#| echo: true
-#| code-line-numbers: false
 #| label: fit-final-model-python
 
 # Fit your chosen workflow to the full data!
