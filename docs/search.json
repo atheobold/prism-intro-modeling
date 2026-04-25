@@ -2,301 +2,301 @@
   {
     "objectID": "slides.html#welcome",
     "href": "slides.html#welcome",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Welcome!",
     "text": "Welcome!\n \n\nMaterials for this workshop can be found here:\nhttps://bit.ly/prism-intro-modeling"
   },
   {
     "objectID": "slides.html#data-context---nhl-player-statistics",
     "href": "slides.html#data-context---nhl-player-statistics",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Data Context - NHL Player Statistics",
     "text": "Data Context - NHL Player Statistics\nThe data for today is taken from this Kaggle dataset of NHL player statistics. The data contain statistics on every NHL player for the 2004 through 2018 seasons assembled by Xavya.\n\nData were scraped from: https://www.hockey-reference.com/\nSkater statistics were scraped from: https://www.hockey-reference.com/leagues/NHL_2018_skaters.html\nHart MVP voting was scraped from: https://www.hockey-reference.com/awards/hart.html"
   },
   {
     "objectID": "slides.html#data-context---nhl-player-birthdays",
     "href": "slides.html#data-context---nhl-player-birthdays",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Data Context - NHL Player Birthdays",
     "text": "Data Context - NHL Player Birthdays\nWe also added in this Tidy Tuesday dataset of player height, weight, and birthday information.\nThis information was acquired through the NHL API.\n\n\n\n\n\n\n\nWhy are we interested in hockey data?\n\n\nDr. Wasila Dahdul will discuss the importance of considering the social and historical context to work responsibly with secondary data!"
   },
   {
     "objectID": "slides.html#loading-the-data",
     "href": "slides.html#loading-the-data",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Loading the Data",
     "text": "Loading the Data\nI’ve saved the .csv to Dropbox, so we can read it in using a URL. Run the code provided to load the data.\n\n\nlibrary(tidyverse)\n\ndata_nhl &lt;- read_csv(\"https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1\")\n\n\n\nimport pandas as pd\n\ndata_nhl = pd.read_csv(\"https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_player_stats.csv?rlkey=kl9usgrmm0ci25n0v95irlzc3&st=27c9lurl&dl=1\")"
   },
   {
     "objectID": "slides.html#inspecting-the-data",
     "href": "slides.html#inspecting-the-data",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Inspecting the Data",
     "text": "Inspecting the Data\n\nTake a few minutes to look over the data.\n\nWhat is the observational unit? (i.e., what uniquely identifies a row?)\nWhat are the variables?\n\nAre there any variables whose meaning is not obvious?\n\nWhat are the data types of the variables (e.g., number, character, date)"
   },
   {
     "objectID": "slides.html#observations-variables",
     "href": "slides.html#observations-variables",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Observations & Variables",
     "text": "Observations & Variables\n\nEach row is a player’s statistics from one season. The variables measured about each player are:\n\nidentification: first_name, last_name\nphysicals: height, weight, age (for that season)\nbirth Information: birth_date, birth_day, birth_month, birth_city, birth_country, birth_state_province\nposition & team: team, position_code (right wing, left wing, center, or defense), position_type (forward or defense), and sweater_number.\nstatistics for the season: games_played, goals, assists, points (goals plus assists), plusminus (team goal differential when player is playing), and penalty_minutes."
   },
   {
     "objectID": "slides.html#posing-a-question",
     "href": "slides.html#posing-a-question",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Posing a Question",
     "text": "Posing a Question\n\nWe will use these data to try to address this question:\n\nWhat features of an NHL player are associated with them scoring more points (goals + assists) in a particular season?"
   },
   {
     "objectID": "slides.html#numeric-variables",
     "href": "slides.html#numeric-variables",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Numeric Variables",
     "text": "Numeric Variables\n\nWhat are we looking for?\n\n\n\nUnusual observations that we might need to remove.\nVariables that are very skewed and might need to be transformed.\nVariables that are extremely multimodal and might need to be binned.\nVariables with values that we might want to omit from our study because they are not relevant to the question."
   },
   {
     "objectID": "slides.html#investigating-with-visuals",
     "href": "slides.html#investigating-with-visuals",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Investigating with Visuals",
     "text": "Investigating with Visuals\nUse the template code provided to create visuals of each numeric variable in the data_nhl dataset:\n\n\n\nheight_in_inches\nweight_in_pounds\nage\nbirth_month\ngames_played\n\n\n\n\n\ngoals\nassists\npoints\nplusminus\npenalty_minutes\n\n\nDo you find anything notable?"
   },
   {
     "objectID": "slides.html#addressing-unusual-observations",
     "href": "slides.html#addressing-unusual-observations",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Addressing Unusual Observations",
     "text": "Addressing Unusual Observations\nBased on what you found in these visuals, there are a few extreme observations in some of the variables. There are two possible explanations for these extreme values:\n\nThese represent a player that genuinely had an extreme performance in a season.\nThese are data entry or recording errors.\n\nEither way, we will choose to omit them, since they might be misleading to our results."
   },
   {
     "objectID": "slides.html#r-python-code",
     "href": "slides.html#r-python-code",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R & Python Code",
     "text": "R & Python Code\nR Code\n\n\ndata_nhl &lt;- data_nhl |&gt;\n  filter(\n    points &lt; 200,\n    penalty_minutes &lt; 400,\n    games_played &gt; 50\n  )\n\n\nPython Code\n\n\ndata_nhl = data_nhl[\n    (data_nhl[\"points\"] &lt; 200) &\n    (data_nhl[\"penalty_minutes\"] &lt; 400) &\n    (data_nhl[\"games_played\"] &gt; 50)\n]"
   },
   {
     "objectID": "slides.html#categorical-variables",
     "href": "slides.html#categorical-variables",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Categorical variables",
     "text": "Categorical variables\n\nWhat are we looking for?\n\n\n\nCategories that should be combined to make a few larger ones.\nVariables that should have an \"Other\" category to combine the rarest categories.\nVariables with too many categories to reasonably include them in our analysis.\nVariables that are subsets of each other, so we might want to include only one or the other.\nAnything that suggests issues with the data to fix."
   },
   {
     "objectID": "slides.html#investigating-with-visuals-1",
     "href": "slides.html#investigating-with-visuals-1",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Investigating with Visuals",
     "text": "Investigating with Visuals\nUse the template code provided to create visuals of each numeric variable in the data_nhl dataset:\n\n\n\nseason\nteam\nposition_code,\nposition_type\n\n\n\n\n\nbirth_city\nbirth_country\nbirth_state_province\n\n\nDo you find anything notable?"
   },
   {
     "objectID": "slides.html#addressing-unusual-observations-1",
     "href": "slides.html#addressing-unusual-observations-1",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Addressing Unusual Observations",
     "text": "Addressing Unusual Observations\nThese visualizations should reveal two issues:\n\nFor some reason, the entries for the 2009 season are listed twice. We will simply delete the duplicates.\nThe birth_city, birth_state_province, and birth_country variables have far too many different values to reasonable use.\n\n\nWe will use the country variable only, and we will limit its values to \"Canada\", \"United States\", or \"Other\"."
   },
   {
     "objectID": "slides.html#r-code",
     "href": "slides.html#r-code",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R Code",
     "text": "R Code\n\ndata_nhl &lt;- data_nhl |&gt;\n  distinct(season, \n           team, \n           first_name, \n           last_name, \n           .keep_all = TRUE) |&gt;\n  mutate(\n    can_or_usa = fct_lump(birth_country, n = 2)\n  )"
   },
   {
     "objectID": "slides.html#python-code",
     "href": "slides.html#python-code",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Python Code",
     "text": "Python Code\n\ndata_nhl = data_nhl.drop_duplicates(\n  subset = [\"season\", \"team\", \"first_name\", \"last_name\"]\n  )\n\ntop_countries = (\n  data_nhl[\"birth_country\"]\n  .value_counts()\n  .nlargest(2)\n  .index\n)\n\ndata_nhl[\"can_or_usa\"] = (\n  data_nhl[\"birth_country\"]\n  .where(data_nhl[\"birth_country\"].isin(top_countries),\n         \"Other\")\n  )"
   },
   {
     "objectID": "slides.html#data-ethics-categorical-variables",
     "href": "slides.html#data-ethics-categorical-variables",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Data Ethics & Categorical Variables",
     "text": "Data Ethics & Categorical Variables\n\n\nCreating an “Other” category might feel fairly benign, but this isn’t always the case.\n\nLet’s consider a different variable—gender.\n\n\n\n\n\n\nSuppose we lump all the PALiISaDS students not identifying as a woman or a man into a category named “Other.”\n\nWhat message does that send to students who identify as non-binary or trans*?\n\n\n\n\n\n\n\nWhat if we created two levels for the variable race—\"White\" and \"Non-White\".\n\nWhat message does that send to students of color?"
   },
   {
     "objectID": "slides.html#check-in",
     "href": "slides.html#check-in",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Check-in!",
     "text": "Check-in!\nLet’s re-visualize the “problem” variables to make sure our cleaning changes accomplished what we hoped!\nVariables to Check:\n\npoints\npenalty_minutes\ngames_played\nseason\ncan_or_usa"
   },
   {
     "objectID": "slides.html#which-of-these-variables-are-associated-with-scoring-points",
     "href": "slides.html#which-of-these-variables-are-associated-with-scoring-points",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Which of these variables are associated with scoring points?",
     "text": "Which of these variables are associated with scoring points?\nWe will answer this question with a predictive model.\n\nInformation from predictor variables will help us guess the value of the target variable (points).\n\n\nTo decide which variable(s) to use as predictors, we need to find the variables with the strongest relationship with points."
   },
   {
     "objectID": "slides.html#numeric-variables-1",
     "href": "slides.html#numeric-variables-1",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Numeric Variables",
     "text": "Numeric Variables\nConsider the numeric variables in this dataset. Which ones might be reasonable to use in our model?\n\nUse the code provided to visualize the relationship between points and a few of these potential predictors.\nDecide which variable(s) seem to have the strongest relationship with our target variable (points).\n\n\n\n\n\n\n\n\n\n\nWarning\n\n\nYou may have noticed that goals, assists, and plusminus are highly associated with points. Why might it be a bad idea to use these as predictors in our model?"
   },
   {
     "objectID": "slides.html#categorical-variables-1",
     "href": "slides.html#categorical-variables-1",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Categorical Variables",
     "text": "Categorical Variables\nConsider the categorical variables in this dataset. Which ones might be reasonable to use in our model?\n\nUse the code provided to visualize the relationship between points and a few of these potential predictors.\nDecide which variable(s) seem to have the strongest relationship with our target variable (points)."
   },
   {
     "objectID": "slides.html#multiple-variables",
     "href": "slides.html#multiple-variables",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Multiple Variables",
     "text": "Multiple Variables\nSometimes, the way one variable associates with points might be different depending on another variables.\nFor example, it is believed that players who are born earlier in the month are more likely to become professional athletes.\nBut! It may be that this trend only applies in some countries, since not all countries have the same youth sports system. Let’s see!"
   },
   {
     "objectID": "slides.html#make-predictor-recipes",
     "href": "slides.html#make-predictor-recipes",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Make Predictor Recipes",
     "text": "Make Predictor Recipes\nNow, we are ready to prepare our recipes: the different combinations of predictors that we think could produce a good model.\nWe’ll try two recipes today:\n\nOne with all the possible predictors\nOne with only the three “best” predictors that you choose."
   },
   {
     "objectID": "slides.html#r-python-code-1",
     "href": "slides.html#r-python-code-1",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R & Python Code",
     "text": "R & Python Code\nR Code\n\n\nlibrary(tidymodels)\n\nrec_all &lt;- recipe(points ~ height + weight + age + can_or_usa + \n                  birth_month + position_code + season + team + \n                  penalty_minutes, data = data_nhl)\n\nrec_best &lt;- recipe(points ~ position_type + season + team, \n                   data = data_nhl)\n\n\nPython Code\n\n\nvars_all = [\"height\", \"weight\", \"age\", \"can_or_usa\", \"birth_month\", \n            \"position_code\", \"season\", \"team\", \"penalty_minutes\"]\n\nvars_best = [\"position_type\", \"season\", \"team\"]"
   },
   {
     "objectID": "slides.html#specifying-candidate-models",
     "href": "slides.html#specifying-candidate-models",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Specifying Candidate Models",
     "text": "Specifying Candidate Models\n\nThe other decision we must make is which model types to try.\nIn this analysis, we will try Linear Regression and a Decision Tree.\n\nLinear regression is a natural choice since we have a continuous numerical outcome and the interpretations are quite simple.\nA decision tree is a simple choice for a non-statistical model that also has easy interpretations.\n\n\n\n\n\n\n\nWarning\n\n\nThere are many, many, many different model types that we can use for any given modeling problem.\nThere is no magic formula for deciding which ones to try. As you get more experience with modeling, you’ll develop more instincts for what range of options to try."
   },
   {
     "objectID": "slides.html#r-python-code-2",
     "href": "slides.html#r-python-code-2",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R & Python Code",
     "text": "R & Python Code\nR Code\n\n\nlr_spec &lt;- linear_reg() |&gt;\n  set_mode(\"regression\")\n\ndt_spec &lt;- decision_tree(min_n = 10) |&gt;\n  set_mode(\"regression\") \n\n\nPython Code\n\n\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.tree import DecisionTreeRegressor\n\nlr_spec = LinearRegression()\n\ndt_spec = DecisionTreeRegressor(min_samples_leaf = 10)"
   },
   {
     "objectID": "slides.html#pre-processing-options",
     "href": "slides.html#pre-processing-options",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Pre-Processing Options",
     "text": "Pre-Processing Options\nRecall that we noticed a few interesting things in our exploratory data analysis:\n\npenalty_minutes is very right-skewed\nBirth country seems to impact how birth month impacts the target.\n\nWe will add a transformation and an interaction to our workflow."
   },
   {
     "objectID": "slides.html#r-python-code-3",
     "href": "slides.html#r-python-code-3",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R & Python Code",
     "text": "R & Python Code\n\n\n\nR Code\nSpecify transformer and variable(s) at the same time\n\n\n\nPython Code\nSpecify “general” transformer, then apply the transformer to specific columns.\n\nHudconfansdr GIFfrom Hudconfansdr GIFs"
   },
   {
     "objectID": "slides.html#combining-data-models",
     "href": "slides.html#combining-data-models",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Combining Data & Models",
     "text": "Combining Data & Models\n\nWe will try all our different model type options with all our different recipe and preprocessing choices.\nEach of these candidate options is called a workflow or a pipeline."
   },
   {
     "objectID": "slides.html#r-python-code-4",
     "href": "slides.html#r-python-code-4",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R & Python Code",
     "text": "R & Python Code\nR Code (Template)\n\n\nworkflow() |&gt;\n  add_model() |&gt;\n  add_recipe()\n\n\n\nPython Code (Template)\n\n\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.base import clone\n\nmake_pipeline(clone(recipe), clone(model))"
   },
   {
     "objectID": "slides.html#section",
     "href": "slides.html#section",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "",
     "text": "Maria Girl GIFfrom Maria GIFs"
   },
   {
     "objectID": "slides.html#comparing-models",
     "href": "slides.html#comparing-models",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Comparing Models",
     "text": "Comparing Models\n\nNow, how will we compare the four options and see which one is most successful at predicting points?\n\n\n\nThe process goes like this:\n\nRandomly set aside 20% of our data rows as a test set. The rest is called the training set.\nFit all of the workflows on the training set.\nSee how well each fitted workflow does at predicting on the test set.\n\n\n\n\n\n\n\n\n\n\n\nWarning\n\n\nIn Part 2 of the workshop, you will learn about using cross-validation to choose between different models. This is essentially the process of creating many different test/training splits."
   },
   {
     "objectID": "slides.html#test-train-split",
     "href": "slides.html#test-train-split",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Test / Train Split",
     "text": "Test / Train Split\nR Code\n\n\nset.seed(2244)\n\nsplit &lt;- initial_split(data_nhl, prop = 0.8)\n\ndata_nhl_train &lt;- training(split)\ndata_nhl_test &lt;- testing(split)\n\n\nPython Code\n\n\nfrom sklearn.model_selection import train_test_split\n\n\ndata_nhl_train, data_nhl_test = train_test_split(data_nhl, \n                                                 test_size = 0.2, \n                                                 random_state = 2244)"
   },
   {
     "objectID": "slides.html#fit-our-models-on-the-training-data",
     "href": "slides.html#fit-our-models-on-the-training-data",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Fit Our Models on the Training Data",
     "text": "Fit Our Models on the Training Data\nR Code (Template)\n\n\n# Fit workflow on training data\nwflow_lr_all_fit &lt;- fit(wflow_lr_all, \n                        data = data_nhl_train)\n\n\n\nPython Code (Template)\n\n\n# Split data into predictor variables\nX_train = data_nhl_train.drop(columns = [\"points\"])\n# and target variable\ny_train = data_nhl_train[\"points\"]\n\n# Fit workflow on training data\nwflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)"
   },
   {
     "objectID": "slides.html#assess-models-on-test-data",
     "href": "slides.html#assess-models-on-test-data",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Assess Models on Test Data",
     "text": "Assess Models on Test Data\nFinally, we will use these fitted models to make predictions on the test data, and we’ll see how close these predictions were to the true observed values for points\n\n\n\n\n\n\n\nNote\n\n\nIn this analysis, we are using root mean squared error as our metric for the test data. That is, we take the squared difference between the predicted number of points a player will get and the actual number of points they get, then we add those numbers up and take the average.\n\n\\[ \\sqrt \\frac{\\sum_{i=1}^n (y_i - \\hat{y}_i)^2}{n}\\]"
   },
   {
     "objectID": "slides.html#r-python-code-5",
     "href": "slides.html#r-python-code-5",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "R & Python Code",
     "text": "R & Python Code\n\nR Code (Template)\n\n\n# Generate predictions\npred_lr_all &lt;- predict(wflow_lr_all_fit, \n                       new_data = data_nhl_test) |&gt; \n  bind_cols(data_nhl_test)\n\n# Compute RMSE metric\nrmse(pred_lr_all, truth = points, estimate = .pred)\n\n\n\nPython Code (Template)\n\n\nfrom sklearn.metrics import mean_squared_error\n\n# Split data into predictors\nX_test = data_nhl_test.drop(columns = [\"points\"])\n# and target\ny_test = data_nhl_test[\"points\"]\n\n# Make predictions\npred_lr_all = wflow_lr_all_fit.predict(X_test)\n\n# Calculate prediction errors\nrmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))"
   },
   {
     "objectID": "slides.html#what-did-you-get",
     "href": "slides.html#what-did-you-get",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "What did you get???",
     "text": "What did you get???\n\nOf our four candidate workflows, which model is the “best” model?\nBy how much? How close is the next best model?"
   },
   {
     "objectID": "slides.html#fit-your-final-model",
     "href": "slides.html#fit-your-final-model",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Fit your final model",
     "text": "Fit your final model\nWe used out test/training split to assess our candidates. However, once we’ve chosen a winner, we want to make sure we use all our data for our final conclusions!\n\n\nSo, we have one last model fitting task:\n\n\nR Code\n\n\nfinal_model &lt;- _______ |&gt;\n  fit(data_nhl)\n\n\n\n\n\nPython Code\n\n\nfinal_model = _______.fit(data_nhl)\n\n\n\n\n\n\n\n\n\nInsert the name of the workflow!"
   },
   {
     "objectID": "slides.html#interpreting-your-final-model",
     "href": "slides.html#interpreting-your-final-model",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Interpreting your Final Model",
     "text": "Interpreting your Final Model\n\nSometimes, the goal of your machine learning process is simply to produce a model.\n\nYou can use the model to predict which players you should draft!\n\n\n\n\nOther times, the goal is more about interpretation.\n\nYou want to tell stories about the patterns in the data.\n\n\n\n\nSince our best final model was a decision tree, we’ll make a dendrogram visualizing the splits."
   },
   {
     "objectID": "slides.html#in-r",
     "href": "slides.html#in-r",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "In R",
     "text": "In R\n\nlibrary(rpart.plot)\n\n# Pull out the parsnip model object\ntree_fit &lt;- extract_fit_parsnip(final_model)\n\nrpart.plot(tree_fit$fit, roundint = FALSE)"
   },
   {
     "objectID": "slides.html#in-python",
     "href": "slides.html#in-python",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "In Python",
     "text": "In Python\n\nfrom sklearn.tree import plot_tree\nimport matplotlib.pyplot as plt\n\nn_features = final_model.named_steps[\"decisiontreeregressor\"].n_features_in_\nfeature_names = [f\"feature_{i}\" for i in range(n_features)]\n\nplt.figure(figsize=(16, 8))\nplot_tree(\n    final_model.named_steps[\"decisiontreeregressor\"],\n    feature_names=feature_names,\n    filled=True,\n    rounded=True,\n    max_depth=3\n)\nplt.show()"
   },
   {
     "objectID": "slides.html#models-that-can-do-harm",
     "href": "slides.html#models-that-can-do-harm",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Models that can do harm",
     "text": "Models that can do harm\n\n\nPredictive models are great at predicting.\nPredictive models are not great in knowing if their model is harmful.\n\n\n\n\nSuppose instead we wanted to predict a student’s likelihood of success in college. Our predictive model suggests that:\n\n\n\nzip_code,\nparental_education,\n\n\n\n\n\nfirst_generation\nstandardized_exam_score\n\n\nare strongly related to students’ college performance.\n\n\n\n\n\nWho does this model privilege? Who is being harmed by this model?"
   },
   {
     "objectID": "slides.html#section-1",
     "href": "slides.html#section-1",
-    "title": "Introduction to Predictive Modeling with Pipelines",
+    "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "",
     "text": "Heated Rivalry Ilya Rozanov GIFfrom Heated Rivalry GIFs"
   },
@@ -312,6 +312,20 @@
     "href": "index.html#accessing-workshop-materials",
     "title": "Predictive Modeling with Pipelines in tidymodels and scikit-learn",
     "section": "Accessing Workshop Materials",
-    "text": "Accessing Workshop Materials\nYou can either work locally with the workshop materials (on your own laptop) or remotely (online). To work locally, you will need to have either R or Python installed on your computer, and a variety of packages. If you do not have either of these installed, you can still work online!\n\n\n\nLocal Files\nDownload the R Quarto file here: intro-modeling-R.qmd\nDownload the Python Quarto file here: intro-modeling-python.qmd\n\n\n\n\n\nRemote Google Colab Files\nClick here to access the R notebook on Google Colab\nClick here to access the Python notebook on Google Colab"
+    "text": "Accessing Workshop Materials\nYou can either work locally with the workshop materials (on your own laptop) or remotely (online). To work locally, you will need to have either R or Python installed on your computer, and a variety of packages. If you do not have either of these installed, you can still work online!\n\nLocal Files with RStudio / Positron\nDownload the R Quarto file here: intro-modeling-R.qmd\nDownload the Python Quarto file here: intro-modeling-python.qmd\n\n\nLocal Files with VS Code / Jupyter Lab / PyCharm\nDownload the .ipynb file here: intro-modeling-python.ipynb\n\n\nRemote Google Colab Files\nClick here to access the R notebook on Google Colab\nClick here to access the Python notebook on Google Colab\n\nHeated Rivalry Ilya Rozanov GIFfrom Heated Rivalry GIFs"
+  },
+  {
+    "objectID": "slides.html#getting-set-up",
+    "href": "slides.html#getting-set-up",
+    "title": "This Pipeline Is Giving Predictive Modeling",
+    "section": "Getting Set-up",
+    "text": "Getting Set-up\n\n\nIf you have R & RStudio / Positron installed locally.\n\nDownload the Quarto file!\n\n\n\n\n\n\nIf you have Python & RStudio / Positron installed locally.\n\nDownload the Quarto file!\n\n\n\n\n\n\n\nIf you do not have any of the above installed locally.\n\nOpen the Google Colab notebook of your choosing!"
+  },
+  {
+    "objectID": "slides.html#last-step",
+    "href": "slides.html#last-step",
+    "title": "This Pipeline Is Giving Predictive Modeling",
+    "section": "Last Step",
+    "text": "Last Step\n\nSo we don’t get bogged down by package installs later on.\n\n\nFor R, we need the following packages:\n\ntidyverse\ntidymodels\nggridges\nrpart.plot\n\n\ninstall.packages(\"ggridges\")\n\n\n\n\nFor Python, we need the following packages:\n\npandas\nplotnine\npandas\nridgenine\nscikit-learn\nmatplotlib\n\n\npip install ridgenine\n\n\n\n\n\n\n\n\nR in Colab\n\n\nRun the code at the beginning of the notebook to install the packages we will be using!"
   }
 ]

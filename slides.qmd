@@ -1,11 +1,10 @@
 ---
-title: "Introduction to Predictive Modeling with Pipelines"
+title: "This Pipeline Is Giving Predictive Modeling"
 author: "Dr. Allison Theobold"
 subtitle: "PRISM 2026"
 format: 
   revealjs:
     theme: [simple, style.scss]
-    scrollable: true
     auto-stretch: true
 editor: source
 ---
@@ -31,7 +30,81 @@ Materials for this workshop can be found here:
 <https://bit.ly/prism-intro-modeling>
 :::
 
-<!-- ilya wink: https://tenor.com/view/heated-rivalry-ilya-rozanov-long-game-wink-shane-hollander-gif-1151741843253260055 -->
+## Getting Set-up
+
+::: {style="font-size: 1.1em; color: #000000;"}
+- If you have R & RStudio / Positron installed locally. 
+    * **Download the Quarto file!**
+:::
+
+. . .
+
+::: {style="font-size: 1.1em; color: #000000;"}
+- If you have Python & RStudio / Positron installed locally. 
+    * **Download the Quarto file!**
+:::
+
+. . .
+
+::: {style="font-size: 1.1em; color: #000000;"}
+- If you **do not** have any of the above installed locally. 
+    * **Open the Google Colab notebook of your choosing!**
+:::
+
+## Last Step
+
+::: {.midi}
+
+So we don't get bogged down by package installs later on. 
+
+::: columns
+::: {.column width="48%"}
+**For R, we need the following packages:**
+
+- `tidyverse`
+- `tidymodels`
+- `ggridges`
+- `rpart.plot`
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+install.packages("ggridges")
+```
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+**For Python, we need the following packages:**
+
+- `pandas`
+- `plotnine`
+- `pandas`
+- `ridgenine`
+- `scikit-learn`
+- `matplotlib`
+
+```{bash}
+#| echo: true
+#| eval: false
+#| code-line-numbers: false
+
+pip install ridgenine
+```
+:::
+:::
+
+::: {.callout-important}
+# R in Colab
+
+Run the code at the beginning of the notebook to install the packages we will be
+using!
+:::
+:::
 
 # Our Goal
 
@@ -40,7 +113,7 @@ Materials for this workshop can be found here:
 3. Choosing predictor (input) variables
 4. Choosing between competing models
 5. Interpreting model conclusions
-6. Ethics considerations
+6. Ethical considerations (interspersed throughout)
 
 # Today's Data - NHL
 
