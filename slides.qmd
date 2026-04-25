@@ -13,6 +13,7 @@ editor: source
 #| include: false
 #| label: reticulate-for-python
 #| message: false
+#| eval: false
 #| warning: false
 
 library(reticulate)
@@ -191,6 +192,7 @@ data_nhl <- read_csv("https://www.dropbox.com/scl/fi/bl8fc27dxunn585o6tyhx/nhl_p
 ```{python}
 #| label: load-data-Python
 #| echo: true
+#| eval: false
 #| code-line-numbers: false
 
 import pandas as pd
@@ -367,6 +369,7 @@ data_nhl <- data_nhl |>
 ```{python}
 #| echo: true
 #| code-line-numbers: false
+#| eval: false
 
 data_nhl = data_nhl[
     (data_nhl["points"] < 200) &
@@ -489,6 +492,7 @@ data_nhl <- data_nhl |>
 ```{python}
 #| echo: true
 #| code-line-numbers: false
+#| eval: false
 
 data_nhl = data_nhl.drop_duplicates(
   subset = ["season", "team", "first_name", "last_name"]
@@ -683,18 +687,24 @@ more likely to become professional athletes.
 But! It may be that this trend only applies in some countries, since not all
 countries have the same youth sports system. Let's see!
 
+## Density Ridges
+
 ```{r}
 #| label: points-by-birth-faceted-by-country-R
 #| echo: false
-#| eval: false
+#| eval: true
+#| output: true
+
+library(ggridges)
 
 data_nhl |>
-  mutate(birth_month = as.factor(birth_month)) |> 
-  ggplot(data = data_nhl, 
-         mapping = aes(x = points, y = birth_month)
-         ) +
-  geom_density_ridges() +
-  facet_wrap(~can_or_usa)
+  mutate(birth_month_cat = as.factor(birth_month)) |> 
+  ggplot(
+    mapping = aes(x = points, y = birth_month_cat, fill = birth_month_cat)
+        ) +
+  geom_density_ridges(alpha = 0.5) +
+  facet_wrap(~can_or_usa) +
+  theme(legend.position = "none")
 ```
 
 ```{python}
@@ -750,6 +760,7 @@ rec_best <- recipe(points ~ position_type + season + team,
 #| echo: true
 #| label: specify-variables-python
 #| code-line-numbers: false
+#| eval: false
 
 vars_all = ["height", "weight", "age", "can_or_usa", "birth_month", 
             "position_code", "season", "team", "penalty_minutes"]
@@ -805,6 +816,7 @@ dt_spec <- decision_tree(min_n = 10) |>
 ```{python}
 #| code-line-numbers: false
 #| echo: true
+#| eval: false
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -870,6 +882,7 @@ Specify "general" transformer, then apply the transformer to specific columns.
 
 ```{python}
 #| label: make-general-transformers
+#| eval: false
 
 import numpy as np
 from sklearn.compose import ColumnTransformer
@@ -892,6 +905,7 @@ interact_transformer = Pipeline([
 
 ```{python}
 #| label: use-transformers-on-specific-columns
+#| eval: false
 
 from sklearn.compose import ColumnTransformer
 
@@ -982,6 +996,7 @@ make_pipeline(clone(recipe), clone(model))
 
 ```{python}
 #| label: specify-model-and-transformers-python
+#| eval: false
 
 from sklearn.pipeline import make_pipeline
 from sklearn.base import clone
@@ -1066,6 +1081,7 @@ data_nhl_test <- testing(split)
 #| echo: true
 #| code-line-numbers: false
 #| label: test-train-split-python
+#| eval: false
 
 from sklearn.model_selection import train_test_split
 
@@ -1102,6 +1118,7 @@ wflow_lr_all_fit <- fit(wflow_lr_all,
 #| label: fit-models-to-training-data-python-ex
 #| echo: true
 #| code-line-numbers: false
+#| eval: false
 
 # Split data into predictor variables
 X_train = data_nhl_train.drop(columns = ["points"])
@@ -1114,6 +1131,7 @@ wflow_lr_all_fit = wflow_lr_all.fit(X_train, y_train)
 
 ```{python}
 #| label: fit-models-to-training-data-python-rest
+#| eval: false
 
 wflow_lr_best_fit = wflow_lr_best.fit(X_train, y_train)
 wflow_dt_all_fit = wflow_dt_all.fit(X_train, y_train)
@@ -1140,13 +1158,8 @@ $$ \sqrt \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{n}$$
 :::
 :::
 
-## R & Python Code
+## R Code (Template)
 
-<!-- NEED TO FIX -->
-
-**R Code (Template)**
-
-::: {.midi}
 ```{r}
 #| echo: true
 #| eval: false
@@ -1160,7 +1173,6 @@ pred_lr_all <- predict(wflow_lr_all_fit,
 # Compute RMSE metric
 rmse(pred_lr_all, truth = points, estimate = .pred)
 ```
-:::
 
 ```{r}
 #| label: predict-R
@@ -1193,11 +1205,8 @@ rmse(pred_dt_best, truth = points, estimate = .pred)
 
 ```
 
-. . .
+## Python Code (Template)
 
-**Python Code (Template)**
-
-::: {.midi}
 ```{python}
 #| echo: true
 #| eval: false
@@ -1216,12 +1225,12 @@ pred_lr_all = wflow_lr_all_fit.predict(X_test)
 # Calculate prediction errors
 rmse_lr_all = np.sqrt(mean_squared_error(y_test, pred_lr_all))
 ```
-:::
 
 ```{python}
 #| label: predict-python
 #| code-line-numbers: false
 #| results: hide
+#| eval: false
 
 from sklearn.metrics import mean_squared_error
 
