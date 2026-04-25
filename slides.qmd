@@ -106,14 +106,35 @@ using!
 :::
 :::
 
-# Our Goal
+## Our Goal
+
+::: columns
+::: {.column width="48%"}
+[**~30 minutes**]{style="font-size: 1.25em;"}
 
 1. Cleaning the data
-2. Visualizing relationships
+2. Visualizing relationships 
+
+[**~30 minutes**]{style="font-size: 1.25em;"}
+
 3. Choosing predictor (input) variables
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+[**~15 minutes**]{style="font-size: 1.25em;"}
+
 4. Choosing between competing models
+
+[**~15 minutes**]{style="font-size: 1.25em;"}
+
 5. Interpreting model conclusions
 6. Ethical considerations (interspersed throughout)
+:::
+:::
+
 
 # Today's Data - NHL
 

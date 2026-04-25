@@ -327,5 +327,12 @@
     "title": "This Pipeline Is Giving Predictive Modeling",
     "section": "Last Step",
     "text": "Last Step\n\nSo we don’t get bogged down by package installs later on.\n\n\nFor R, we need the following packages:\n\ntidyverse\ntidymodels\nggridges\nrpart.plot\n\n\ninstall.packages(\"ggridges\")\n\n\n\n\nFor Python, we need the following packages:\n\npandas\nplotnine\npandas\nridgenine\nscikit-learn\nmatplotlib\n\n\npip install ridgenine\n\n\n\n\n\n\n\n\nR in Colab\n\n\nRun the code at the beginning of the notebook to install the packages we will be using!"
+  },
+  {
+    "objectID": "slides.html#our-goal",
+    "href": "slides.html#our-goal",
+    "title": "This Pipeline Is Giving Predictive Modeling",
+    "section": "Our Goal",
+    "text": "Our Goal\n\n\n~30 minutes\n\nCleaning the data\nVisualizing relationships\n\n~30 minutes\n\nChoosing predictor (input) variables\n\n\n\n\n~15 minutes\n\nChoosing between competing models\n\n~15 minutes\n\nInterpreting model conclusions\nEthical considerations (interspersed throughout)"
   }
 ]
