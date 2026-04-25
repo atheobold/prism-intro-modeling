@@ -32,28 +32,20 @@ or **remotely** (online). To work locally, you will need to have either R or
 Python installed on your computer, and a variety of packages. If you do not 
 have either of these installed, you can still work online! 
 
-::: columns
-::: {.column width="48%"}
-### Local Files
+### Local Files with RStudio / Positron
 
 Download the R Quarto file here: <a href="materials/intro-modeling-R.qmd" download>`intro-modeling-R.qmd`</a>
 
 Download the Python Quarto file here: <a href="materials/intro-modeling-python.qmd" download>`intro-modeling-python.qmd`</a>
 
-:::
+### Local Files with VS Code / Jupyter Lab / PyCharm
 
-::: {.column width="4%"}
-:::
+Download the `.ipynb` file here: <a href="materials/intro-modeling-python.ipynb" download>`intro-modeling-python.ipynb`</a>
 
-::: {.column width="48%"}
 ### Remote Google Colab Files
 
 [Click here to access the R notebook on Google Colab](https://colab.research.google.com/drive/1dUFCNcSB1XrQ7SVqQg7aYhcTzRuJuhuF?usp=sharing)
 
 [Click here to access the Python notebook on Google Colab](https://colab.research.google.com/drive/1YVMOQqCYxndC9S7-BJ5_RVJHrs4vPoQw?usp=sharing)
-:::
-:::
 
-
-
-
+<div class="tenor-gif-embed" data-postid="1151741843253260055" data-share-method="host" data-aspect-ratio="1.58599" data-width="100%"><a href="https://tenor.com/view/heated-rivalry-ilya-rozanov-long-game-wink-shane-hollander-gif-1151741843253260055">Heated Rivalry Ilya Rozanov GIF</a>from <a href="https://tenor.com/search/heated+rivalry-gifs">Heated Rivalry GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>

@@ -259,14 +259,10 @@ Use the code provided to visualize the relationship between `points` and a few
 of these potential predictors. Decide which variable(s) seem to have the 
 strongest relationship with our target variable (`points`). 
 
-```{bash}
-# Note you will need to install the ridgenine package for this plot to work!
-pip install ridgenine
-```
-
 ```{python}
 #| label: ggplot-template-one-cat-one-num
 
+# Note you will need to install the ridgenine package for this plot to work!
 from ridgenine import geom_density_ridges
 
 (
